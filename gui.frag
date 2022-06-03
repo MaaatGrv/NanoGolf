@@ -4,7 +4,7 @@ out vec4 color;
 
 in vec2 vtex;
 
-uniform sampler2D texture;
+uniform sampler2D t;
 uniform int c;
 
 void main (void)

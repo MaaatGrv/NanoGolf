@@ -9,7 +9,7 @@ in vec3 vnormale;
 in vec4 vcolor;
 in vec2 vtex;
 
-uniform sampler2D texture;
+uniform sampler2D t;
 
 vec3 light=vec3(0.5,0.5,5.0);
 

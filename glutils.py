@@ -41,7 +41,7 @@ def create_program_from_file(vs_file, fs_file):
         else print(f'{25*"-"}\nError reading file:\n{fs_file}\n{25*"-"}')
     return create_program(vs_content, fs_content)
 
-def load_texture(filename):
+def load_t(filename):
     if not os.path.exists(filename):
         print(f'{25*"-"}\nError reading file:\n{filename}\n{25*"-"}')
     im = Image.open(filename).transpose(Image.Transpose.FLIP_TOP_BOTTOM).convert('RGBA')

@@ -20,7 +20,7 @@ def main():
     m.normalize()
     m.apply_matrix(pyrr.matrix44.create_from_scale([0.2, 0.2, 0.2, 1])) #changer la taille de la sphere
     tr = Transformation3D()
-    tr.translation.y = -np.amin(m.vertices, axis=0)[1]
+    tr.translation.y = 0.4
     tr.translation.z = -5
     tr.rotation_center.z = 0.2
     texture = glutils.load_texture('ball_red.png')
@@ -28,7 +28,7 @@ def main():
     viewer.add_object(o)
 
 
-    m = Mesh.load_obj('walls.obj')
+    m = Mesh.load_obj('wall.obj')
     m.normalize()
     m.apply_matrix(pyrr.matrix44.create_from_scale([2, 2, 2, 1])) #changer la taille de la sphere
     tr = Transformation3D()
@@ -39,7 +39,7 @@ def main():
     o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
     viewer.add_object(o)
     
-    m = Mesh.load_obj('walls.obj')
+    m = Mesh.load_obj('wall.obj')
     m.normalize()
     m.apply_matrix(pyrr.matrix44.create_from_scale([2, 2, 2, 1])) #changer la taille de la sphere
     tr = Transformation3D()
@@ -51,7 +51,7 @@ def main():
     o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
     viewer.add_object(o)
     
-    m = Mesh.load_obj('walls.obj')
+    m = Mesh.load_obj('wall.obj')
     m.normalize()
     m.apply_matrix(pyrr.matrix44.create_from_scale([2, 2, 2, 1])) #changer la taille de la sphere
     tr = Transformation3D()

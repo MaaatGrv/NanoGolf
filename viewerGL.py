@@ -7,6 +7,7 @@ import glfw
 import pyrr
 import numpy as np
 from cpe3d import Object3D
+import time
 
 class ViewerGL:
     def __init__(self):
@@ -35,6 +36,7 @@ class ViewerGL:
         self.touch = {}
         self.power=0.0
         self.length=0.0
+        self.downlength=0.0
 
     def run(self):
         # boucle d'affichage
@@ -63,7 +65,10 @@ class ViewerGL:
 
         if key == glfw.KEY_P and action == glfw.RELEASE:
             print("LONGUEUR FINALE:" + str(self.length))
-        
+            time.sleep(1)
+            self.objs[1].transformation.translation -= \
+                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[1].transformation.rotation_euler), pyrr.Vector3([0, self.downlength, 0,]))
+            self.downlength = 0.0
         if key == glfw.KEY_P and action == glfw.PRESS:
             self.power = 0.0
             self.length = 0.0
@@ -119,16 +124,22 @@ class ViewerGL:
         if glfw.KEY_UP in self.touch and self.touch[glfw.KEY_UP] > 0:
             self.objs[0].transformation.translation += \
                 pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, 0.02]))
+            self.objs[1].transformation.translation += \
+                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[1].transformation.rotation_euler), pyrr.Vector3([0, 0, 0.02]))
             self.update_cam()
         if glfw.KEY_DOWN in self.touch and self.touch[glfw.KEY_DOWN] > 0:
             self.objs[0].transformation.translation -= \
                 pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, 0.02]))
+            self.objs[1].transformation.translation -= \
+                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[1].transformation.rotation_euler), pyrr.Vector3([0, 0, 0.02]))
             self.update_cam()
         if glfw.KEY_LEFT in self.touch and self.touch[glfw.KEY_LEFT] > 0:
             self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] -= 0.1
+            self.objs[1].transformation.rotation_euler[pyrr.euler.index().yaw] -= 0.1
             self.update_cam()
         if glfw.KEY_RIGHT in self.touch and self.touch[glfw.KEY_RIGHT] > 0:
             self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] += 0.1
+            self.objs[1].transformation.rotation_euler[pyrr.euler.index().yaw] += 0.1
             self.update_cam()
             
         if glfw.KEY_I in self.touch and self.touch[glfw.KEY_I] > 0:
@@ -149,7 +160,11 @@ class ViewerGL:
         if glfw.KEY_P in self.touch and self.touch[glfw.KEY_P] > 0:
             self.power+=1.2
             self.calculate_bar_length()
-
+            if self.length < 5:
+                self.objs[1].transformation.translation += \
+                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[1].transformation.rotation_euler), pyrr.Vector3([0, 0.048, 0,]))
+                self.downlength+=0.048
+                
     def calculate_bar_length(self):
         lmax = 5
         powermax=100

@@ -26,13 +26,9 @@ void main (void)
 {
   //Les coordonnees 3D du sommet
   coordonnee_3d = position;
-  
-  // if (position.y > 5.0)
-  //   vec4 translation_model = vec4(0.0, 0.0, 0.0, 1.0);
-  
+
   //application de la deformation du model
   vec4 p_model = rotation_model*(vec4(position, 1.0)-rotation_center_model)+rotation_center_model+translation_model;
-
   //application de la deformation de la vue
   vec4 p_modelview = rotation_view*(p_model-rotation_center_view)+rotation_center_view+translation_view;
 

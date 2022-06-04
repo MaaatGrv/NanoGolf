@@ -26,13 +26,13 @@ void main (void)
   float specular = 0.2*pow(clamp(dot(r,o),0.0,1.0),128.0);
   float ambiant  = 0.2;
 
-  vec4 white = vec4(1.0, 0.0, 0.0, 1.0);
+  vec4 white = vec4(1.0,1.0,1.0,1.0);
 
   //recuperation de la texture
   vec4 color_texture = texture(t, vtex);
   vec4 color_final   = vcolor*color_texture;
 
   //couleur finale
-  color = vec4(1.0, 0.0, 0.0, 1.0);
+  color = vec4(1.0, 1.0, 1.0, 1.0);
 
 }

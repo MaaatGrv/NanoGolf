@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from operator import length_hint
 from turtle import update
 import OpenGL.GL as GL
 import glfw
@@ -32,6 +33,8 @@ class ViewerGL:
 
         self.objs = []
         self.touch = {}
+        self.power=0.0
+        self.length=0.0
 
     def run(self):
         # boucle d'affichage
@@ -57,7 +60,17 @@ class ViewerGL:
         if key == glfw.KEY_ESCAPE and action == glfw.PRESS:
             glfw.set_window_should_close(win, glfw.TRUE)
         self.touch[key] = action
+
+        if key == glfw.KEY_P and action == glfw.RELEASE:
+            print("LONGUEUR FINALE:" + str(self.length))
+        
+        if key == glfw.KEY_P and action == glfw.PRESS:
+            self.power = 0.0
+            self.length = 0.0
     
+    def send_length(self, length):
+        pass
+
     def add_object(self, obj):
         self.objs.append(obj)
 
@@ -132,3 +145,16 @@ class ViewerGL:
             self.cam.transformation.rotation_euler[pyrr.euler.index().yaw] += np.pi
             self.cam.transformation.rotation_center = self.objs[0].transformation.translation + self.objs[0].transformation.rotation_center
             self.cam.transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([0, 1, 5])
+
+        if glfw.KEY_P in self.touch and self.touch[glfw.KEY_P] > 0:
+            self.power+=1.2
+            self.calculate_bar_length()
+
+    def calculate_bar_length(self):
+        lmax = 5
+        powermax=100
+        if self.power  < powermax:
+            self.length = (self.power*lmax)/powermax
+        else :
+            self.length = lmax
+        print(self.length)

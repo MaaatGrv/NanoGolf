@@ -26,6 +26,7 @@ def main():
     texture = glutils.load_texture('ball_red.png')
     o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
     viewer.add_object(o)
+    o.collision(0,12.5,-3.8, -6.5)
 
 
     m = Mesh.load_obj('wall.obj')
@@ -34,7 +35,7 @@ def main():
     tr = Transformation3D()
     tr.translation.y = 0.2
     tr.translation.z = -5
-    tr.rotation_center.z = -2
+    tr.rotation_center.z = 0.2
     texture = glutils.load_texture('bois.png')
     o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
     viewer.add_object(o)

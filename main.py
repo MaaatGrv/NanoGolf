@@ -49,7 +49,8 @@ def main():
         texture = glutils.load_texture('bois.png')
         o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
         viewer.add_object(o)
-    viewer.collision(collision_box)
+
+
     
     m = Mesh.load_obj('hole_round.obj')
     m.normalize()
@@ -104,7 +105,7 @@ def main():
     o = Text('Golf', np.array([-0.5, -0.2], np.float32), np.array([0.5, 0.3], np.float32), vao, 2, programGUI_id, texture)
     viewer.add_object(o)
 
-    viewer.run()
+    viewer.run(collision_box)
 
 
 if __name__ == '__main__':

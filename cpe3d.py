@@ -57,20 +57,7 @@ class Object3D(Object):
 
         super().draw()
     
-    def collision(self,x1,x2,z1,z2):
-        GL.glUseProgram(self.program)
 
-        # Récupère l'identifiant de la variable pour le programme courant
-        loc = GL.glGetUniformLocation(self.program, "translation_model")
-        # Vérifie que la variable existe
-        if (loc == -1) :
-            print("Pas de variable uniforme : translation_model")
-        # Modifie la variable pour le programme courant
-        translation = self.transformation.translation
-        if translation.x <= x1 and translation.x >= x2 and translation.z >= z2 and translation.z <= z1:
-            translation.x=translation.x
-            translation.z=translation.z
-            GL.glUniform4f(loc, translation.x, translation.y, translation.z, 0)
 
             
         

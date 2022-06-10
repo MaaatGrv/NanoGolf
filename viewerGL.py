@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from tkinter import X
 import OpenGL.GL as GL
 import glfw
 import pyrr
@@ -32,13 +33,14 @@ class ViewerGL:
         self.objs = []
         self.touch = {}
 
-    def run(self):
+    def run(self,L):
         # boucle d'affichage
         while not glfw.window_should_close(self.window):
             # nettoyage de la fenêtre : fond et profondeur
             GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
 
             self.update_key()
+            self.verif_collision(L)
 
             for obj in self.objs:
                 GL.glUseProgram(obj.program)
@@ -62,11 +64,7 @@ class ViewerGL:
         Xmax=[]
         Zmin=[]
         Zmax=[]
-        Xmin.append(L[0][0])
-        Xmax.append(L[1][0])
-        Zmin.append(L[0][1])
-        Zmax.append(L[1][1])
-        for i in range(len(L)+1):
+        for i in range(0,len(L)-1):
             Xmin.append(L[i][2])
             Xmax.append(L[i+1][2])
             Zmin.append(L[i][3])
@@ -111,22 +109,20 @@ class ViewerGL:
             print("Pas de variable uniforme : projection")
         GL.glUniformMatrix4fv(loc, 1, GL.GL_FALSE, self.cam.projection)
 
-    def update_key(self,L):
-        Xmin,Xmax,Zmin,Zmax = self.collision(self,L)
+    def update_key(self):
         if glfw.KEY_UP in self.touch and self.touch[glfw.KEY_UP] > 0:
             self.objs[0].transformation.translation += \
                 pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, 0.02]))          
-            print(self.objs[0].transformation.translation)
+
         if glfw.KEY_DOWN in self.touch and self.touch[glfw.KEY_DOWN] > 0:
             self.objs[0].transformation.translation -= \
                 pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, 0.02]))
-            print(self.objs[0].transformation.translation)
+
         if glfw.KEY_LEFT in self.touch and self.touch[glfw.KEY_LEFT] > 0:
             self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] -= 0.1
-            print(self.objs[0].transformation.rotation_euler)
+
         if glfw.KEY_RIGHT in self.touch and self.touch[glfw.KEY_RIGHT] > 0:
             self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] += 0.1
-            print(self.objs[0].transformation.rotation_euler)
 
         if glfw.KEY_I in self.touch and self.touch[glfw.KEY_I] > 0:
             self.cam.transformation.rotation_euler[pyrr.euler.index().roll] -= 0.1
@@ -144,9 +140,17 @@ class ViewerGL:
         self.cam.transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([0, 1, 5])
 
     def verif_collision(self,L):
-        Xmin,Xmax,Zmin,Zmax = self.collision(self,L)
-        for x in Xmin :
-            if x < -0.5 :
-                return True
-        if self.objs[0].transformation.translation[0] < Xmin[0]: #self.objs[0].transformation.translation[0] => coordonne en x de translation
-            self.objs[0].transformation.translation[0] = Xmin[0]
+        Xmin,Xmax,Zmin,Zmax = self.collision(L)
+        Xzip=zip(Xmin,Zmin)
+        Zzip=zip(Xmax,Zmax)
+
+        # if self.objs[0].transformation.translation[0] = Xmin[0] and self.objs[0].transformation.translation[0] <= Xmax[0] and self.objs[0].transformation.translation[2] >= Zmin[0] and self.objs[0].transformation.translation[2] <= Zmax[0]:
+        #     print("collision")
+        # elif  self.objs[0].transformation.translation[0] >= Xmin[1] and self.objs[0].transformation.translation[0] <= Xmax[1] and self.objs[0].transformation.translation[2] >= Zmin[1] and self.objs[0].transformation.translation[2] <= Zmax[1]:
+        #     print("collision")
+        # elif  self.objs[0].transformation.translation[0] >= Xmin[2] and self.objs[0].transformation.translation[0] <= Xmax[2] and self.objs[0].transformation.translation[2] >= Zmin[2] and self.objs[0].transformation.translation[2] <= Zmax[2]:
+        #     print("collision")
+        # elif  self.objs[0].transformation.translation[0] >= Xmin[3] and self.objs[0].transformation.translation[0] <= Xmax[3] and self.objs[0].transformation.translation[2] >= Zmin[3] and self.objs[0].transformation.translation[2] <= Zmax[3]:
+        #     print("collision")
+        # else:
+        #     print("pas de collision")

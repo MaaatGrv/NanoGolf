@@ -30,6 +30,7 @@ class ViewerGL:
         self.objs = []
         self.touch = {}
         self.verif=False
+        self.rebond=False
         self.origin= [ 0. ,  0.4, -5. ]
 
     def run(self):
@@ -140,17 +141,20 @@ class ViewerGL:
 
     def verif_collision(self):
         if self.objs[0].transformation.translation[0] <= -1.25192378 or self.objs[0].transformation.translation[0] >= 12.00292513 or self.objs[0].transformation.translation[2] <=-6.59623226 or self.objs[0].transformation.translation[2] >=-3.87759959:
-            alpha=np.arc
-            self.origin=self.objs[0].transformation.translation
+            self.rebond=True
+            self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] += 0.15
+            
             print("collision")
         else:
             print("pas de collision")
-    
+
     def trajectory(self,a):
         b=0
         if self.verif:
-            while a-b>0: 
+            while a-b>0:
                 self.objs[0].transformation.translation += \
-                    pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, 0.025]))
+                    pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, 0.02]))
                 b+=1
+
+
             

@@ -60,17 +60,6 @@ class ViewerGL:
             glfw.set_window_should_close(win, glfw.TRUE)
         self.touch[key] = action
     
-    def collision(self,L):
-        Xmin=[]
-        Xmax=[]
-        Zmin=[]
-        Zmax=[]
-        for i in range(0,len(L)-1):
-            Xmin.append(L[i][2])
-            Xmax.append(L[i+1][2])
-            Zmin.append(L[i][3])
-            Zmax.append(L[i+1][3])
-        return Xmin,Xmax,Zmin,Zmax
 
 
     def add_object(self, obj):
@@ -141,7 +130,7 @@ class ViewerGL:
         self.cam.transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([0, 1, 5])
 
     def verif_collision(self):
-        if self.objs[0].transformation.translation[0] <= -1.25192378 or self.objs[0].transformation.translation[0] >= 12.00292513 or self.objs[0].transformation.translation[2] <=-6.59623226 or self.objs[0].transformation.translation[2] >=-3.87759959:
+        if self.objs[0].transformation.translation[2] <=-6.59623226 or self.objs[0].transformation.translation[2] >=-3.87759959:
             self.rebond=True
             H=np.array([self.objs[0].transformation.translation[0],self.origin[1],self.origin[2]]) #projeter de l'origine 
             print("origin",self.origin)
@@ -151,6 +140,10 @@ class ViewerGL:
             angle=np.arccos(dist2/dist1)
             print("angle",angle)
             self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] -= angle
+        if self.objs[0].transformation.translation[0] <= -1.25192378:
+            self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] +=0.5
+        if self.objs[0].transformation.translation[0] >= 13.22652818:
+            self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] -=0.5
             
 
     def trajectory(self,a):

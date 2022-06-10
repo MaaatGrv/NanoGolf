@@ -53,7 +53,7 @@ def main():
         viewer.add_object(o)
 
 
-    
+
     m = Mesh.load_obj('hole_square.obj')
     m.normalize()
     m.apply_matrix(pyrr.matrix44.create_from_scale([2, 2, 2, 1])) #changer la taille de la sphere

@@ -799,8 +799,8 @@ position_init=[ 0.   0.4 -5. ]
 
 [-1.25192378    0.4        -3.87759959] point droit min
 
-[12.00292513  0.4        -6.59623226] point gauche max
+[14.04590342  0.4        -6.59623226] point gauche max
     
-[12.00292513  0.4        -3.87759959] point droit max
+[14.04590342   0.4        -3.87759959] point droit max
 
 

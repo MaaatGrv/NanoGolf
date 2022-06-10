@@ -71,10 +71,6 @@ def main():
     tr.translation.x = 12
     tr.translation.y = 2
 
-    # minaabb=np.amin(m.vertices,axis=0)[:3]
-    # maxaabb=np.amax(m.vertices,axis=0)[:3]
-    # AABB=[minaabb,maxaabb]
-    # print("AABB: ",AABB)
 
     tr.translation.z = -4.3
     tr.rotation_center.z = -2

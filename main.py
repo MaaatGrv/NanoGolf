@@ -6,9 +6,11 @@ from cpe3d import Object3D, Camera, Transformation3D, Text
 import numpy as np
 import OpenGL.GL as GL
 import pyrr
+import time
 
 def main():
     viewer = ViewerGL()
+    start_time = time.time()
 
     viewer.set_camera(Camera())
     viewer.cam.transformation.translation.y = 2
@@ -52,7 +54,7 @@ def main():
 
 
     
-    m = Mesh.load_obj('hole_round.obj')
+    m = Mesh.load_obj('hole_square.obj')
     m.normalize()
     m.apply_matrix(pyrr.matrix44.create_from_scale([2, 2, 2, 1])) #changer la taille de la sphere
     tr = Transformation3D()
@@ -93,7 +95,7 @@ def main():
     
     
     
-
+  
     vao = Text.initalize_geometry()
     texture = glutils.load_texture('fontB.jpg')
     o = Text('Nano ', np.array([-0.8, 0.3], np.float32), np.array([0.8, 0.8], np.float32), vao, 2, programGUI_id, texture)

@@ -89,29 +89,30 @@ class Text(Object):
         super().__init__(vao, nb_triangle, program, texture)
 
     def draw(self):
-        GL.glUseProgram(self.program)
-        GL.glDisable(GL.GL_DEPTH_TEST)
-        size = self.topRight-self.bottomLeft
-        size[0] /= len(self.value)
-        loc = GL.glGetUniformLocation(self.program, "size")
-        if (loc == -1) :
-            print("Pas de variable uniforme : size")
-        GL.glUniform2f(loc, size[0], size[1])
-        GL.glBindVertexArray(self.vao)
-        GL.glBindTexture(GL.GL_TEXTURE_2D, self.texture)
-        for idx, c in enumerate(self.value):
-            loc = GL.glGetUniformLocation(self.program, "start")
+        if self.visible :
+            GL.glUseProgram(self.program)
+            GL.glDisable(GL.GL_DEPTH_TEST)
+            size = self.topRight-self.bottomLeft
+            size[0] /= len(self.value)
+            loc = GL.glGetUniformLocation(self.program, "size")
             if (loc == -1) :
-                print("Pas de variable uniforme : start")
-            GL.glUniform2f(loc, self.bottomLeft[0]+idx*size[0], self.bottomLeft[1])
+                print("Pas de variable uniforme : size")
+            GL.glUniform2f(loc, size[0], size[1])
+            GL.glBindVertexArray(self.vao)
+            GL.glBindTexture(GL.GL_TEXTURE_2D, self.texture)
+            for idx, c in enumerate(self.value):
+                loc = GL.glGetUniformLocation(self.program, "start")
+                if (loc == -1) :
+                    print("Pas de variable uniforme : start")
+                GL.glUniform2f(loc, self.bottomLeft[0]+idx*size[0], self.bottomLeft[1])
 
-            loc = GL.glGetUniformLocation(self.program, "c")
-            if (loc == -1) :
-                print("Pas de variable uniforme : c")
-            GL.glUniform1i(loc, np.array(ord(c), np.int32))
+                loc = GL.glGetUniformLocation(self.program, "c")
+                if (loc == -1) :
+                    print("Pas de variable uniforme : c")
+                GL.glUniform1i(loc, np.array(ord(c), np.int32))
 
-            GL.glDrawElements(GL.GL_TRIANGLES, 3*2, GL.GL_UNSIGNED_INT, None)
-        GL.glEnable(GL.GL_DEPTH_TEST)
+                GL.glDrawElements(GL.GL_TRIANGLES, 3*2, GL.GL_UNSIGNED_INT, None)
+            GL.glEnable(GL.GL_DEPTH_TEST)
 
     @staticmethod
     def initalize_geometry():

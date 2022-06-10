@@ -5,6 +5,7 @@ from cpe3d import Object3D, Camera, Transformation3D, Text
 import numpy as np
 import OpenGL.GL as GL
 import pyrr
+import time
 
 def main():
     viewer = ViewerGL()
@@ -82,12 +83,26 @@ def main():
     tr = Transformation3D()
     tr.translation.x = 12
     tr.translation.y = 2
-    tr.translation.z = -4
+    tr.translation.z = -4.3
     tr.rotation_center.z = -2
     texture = glutils.load_texture('flag_blue.png')
     o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
     viewer.add_object(o)
-    
+
+    minaabb=np.amin(m.vertices,axis=0)[:3]
+    maxaabb=np.amax(m.vertices,axis=0)[:3]
+    AABB=[minaabb, maxaabb]
+    CCDD=[[0,0,0],[0,0,0]]
+    AABB[0][0]=AABB[0][0]+12
+    AABB[1][0]=AABB[1][0]+12
+    AABB[0][2]=AABB[0][2]-4.3
+    AABB[1][2]=AABB[1][2]-4.3
+    CCDD[0][0]=AABB[0][0]
+    CCDD[1][0]=AABB[1][0]+2*(maxaabb[0]-12)
+    CCDD[0][2]=AABB[0][2]+(minaabb[2]+4.3) 
+    CCDD[1][2]=AABB[1][2]
+
+
 
 
 
@@ -100,18 +115,26 @@ def main():
     texture = glutils.load_texture('grass.jpg')
     o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, Transformation3D())
     viewer.add_object(o)
-    
-    
-    
 
-    vao = Text.initalize_geometry()
-    texture = glutils.load_texture('fontB.jpg')
-    o = Text('Nano ', np.array([-0.8, 0.3], np.float32), np.array([0.8, 0.8], np.float32), vao, 2, programGUI_id, texture)
-    viewer.add_object(o)
-    o = Text('Golf', np.array([-0.5, -0.2], np.float32), np.array([0.5, 0.3], np.float32), vao, 2, programGUI_id, texture)
-    viewer.add_object(o)
+    #start_time = time.time()
+    #end_time = start_time + 5
+    #programGUI_id = glutils.create_program_from_file('gui.vert', 'gui.frag')
+    #vao = Text.initalize_geometry()
+    #texture = glutils.load_texture('fontB.jpg')
+    #while time.time() <= end_time:
+    #    o = Text('Nano ', np.array([-0.8, 0.3], np.float32), np.array([0.8, 0.8], np.float32), vao, 2, programGUI_id, texture)
+    #    viewer.add_object(o)
+    #    o.visible = True
+    #o.visible = False
+    #while time.time() <= end_time:
+    #    o = Text('Golf', np.array([-0.5, -0.2], np.float32), np.array([0.5, 0.3], np.float32), vao, 2, programGUI_id, texture)
+    #    viewer.add_object(o)
+    #    o.visible = True
+    #o.visible = False
 
-    viewer.run()
+
+
+    viewer.run(AABB, CCDD)
 
 
 if __name__ == '__main__':

@@ -4,7 +4,9 @@ import OpenGL.GL as GL
 import glfw
 import pyrr
 import numpy as np
-from cpe3d import Object3D
+from cpe3d import Object3D, Text
+import glutils
+import time, datetime
 
 class ViewerGL:
     def __init__(self):
@@ -32,13 +34,21 @@ class ViewerGL:
         self.objs = []
         self.touch = {}
 
-    def run(self):
+    def run(self,L1,L2):
         # boucle d'affichage
         while not glfw.window_should_close(self.window):
             # nettoyage de la fenêtre : fond et profondeur
             GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
 
             self.update_key()
+            self.toucher_drapeau(L1,L2)
+            programGUI_id = glutils.create_program_from_file('gui.vert', 'gui.frag')
+            vao = Text.initalize_geometry()
+            texture = glutils.load_texture('fontB.jpg')
+            if self.toucher_drapeau(L1,L2) == True :
+                o = Text('Felicitations', np.array([-0.5, -0.2], np.float32), np.array([0.5, 0.3], np.float32), vao, 2, programGUI_id, texture)
+                self.add_object(o)
+
 
             for obj in self.objs:
                 GL.glUseProgram(obj.program)
@@ -50,6 +60,7 @@ class ViewerGL:
             glfw.swap_buffers(self.window)
             # gestion des évènements
             glfw.poll_events()
+
         
     def key_callback(self, win, key, scancode, action, mods):
         # sortie du programme si appui sur la touche 'échappement'
@@ -94,21 +105,37 @@ class ViewerGL:
             print("Pas de variable uniforme : projection")
         GL.glUniformMatrix4fv(loc, 1, GL.GL_FALSE, self.cam.projection)
 
+    def gagner(self, L1, L2):
+        xmin=[]
+        xmax=[]
+        zmin=[]
+        zmax=[]
+        xmin.append(L1[0][0])
+        xmax.append(L2[1][0])
+        zmax.append(L1[1][2])
+        zmin.append(L2[0][2])
+        return(xmin,xmax,zmin,zmax)
+        
+
+    def toucher_drapeau(self, L1, L2):
+        xmin,xmax,zmin,zmax=self.gagner(L1,L2)
+        if self.objs[0].transformation.translation[0]>xmin[0] and self.objs[0].transformation.translation[0]<xmax[0] and self.objs[0].transformation.translation[2]>zmin[0] and self.objs[0].transformation.translation[2]<zmax[0] :
+            print("vous avez gagné")
+            return True
+
+
     def update_key(self):
         if glfw.KEY_UP in self.touch and self.touch[glfw.KEY_UP] > 0:
             self.objs[0].transformation.translation += \
                 pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, 0.02]))
-            print(self.objs[0].transformation.translation)
         if glfw.KEY_DOWN in self.touch and self.touch[glfw.KEY_DOWN] > 0:
             self.objs[0].transformation.translation -= \
                 pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, 0.02]))
-            print(self.objs[0].transformation.translation)
         if glfw.KEY_LEFT in self.touch and self.touch[glfw.KEY_LEFT] > 0:
             self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] -= 0.1
-            print(self.objs[0].transformation.rotation_euler)
         if glfw.KEY_RIGHT in self.touch and self.touch[glfw.KEY_RIGHT] > 0:
             self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] += 0.1
-            print(self.objs[0].transformation.rotation_euler)
+        
 
         if glfw.KEY_I in self.touch and self.touch[glfw.KEY_I] > 0:
             self.cam.transformation.rotation_euler[pyrr.euler.index().roll] -= 0.1

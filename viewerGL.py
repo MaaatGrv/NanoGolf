@@ -65,6 +65,9 @@ class ViewerGL:
     def add_object(self, obj):
         self.objs.append(obj)
 
+    def delete_object(self, obj):
+       self.objs.remove(obj)
+    
     def set_camera(self, cam):
         self.cam = cam
 
@@ -104,7 +107,7 @@ class ViewerGL:
             self.verif=True
             # self.objs[0].transformation.translation += \
             #    pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, 0.2]))   
-            # print(self.objs[0].transformation.translation)    
+            # print(self.objs[0].transformation.translation)   
         if glfw.KEY_DOWN in self.touch and self.touch[glfw.KEY_DOWN] > 0:
             self.objs[0].transformation.translation -= \
                 pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, 0.02]))

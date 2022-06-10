@@ -6,11 +6,12 @@ from cpe3d import Object3D, Camera, Transformation3D, Text
 import numpy as np
 import OpenGL.GL as GL
 import pyrr
-import time
+import time,glfw
 
 def main():
     viewer = ViewerGL()
-    start_time = time.time()
+
+
 
     viewer.set_camera(Camera())
     viewer.cam.transformation.translation.y = 2
@@ -95,13 +96,23 @@ def main():
     
     
     
-  
+    end_time = glfw.GetTime()
     vao = Text.initalize_geometry()
     texture = glutils.load_texture('fontB.jpg')
     o = Text('Nano ', np.array([-0.8, 0.3], np.float32), np.array([0.8, 0.8], np.float32), vao, 2, programGUI_id, texture)
     viewer.add_object(o)
+    if end_time-current_time == 10:
+        viewer.delete_object(o)
+    else:
+        end_time = glfw.GetTime()
+
     o = Text('Golf', np.array([-0.5, -0.2], np.float32), np.array([0.5, 0.3], np.float32), vao, 2, programGUI_id, texture)
     viewer.add_object(o)
+    if end_time-current_time == 10:
+        viewer.delete_object(o)
+    else:
+        end_time = glfw.GetTime()
+        
 
     viewer.run()
 

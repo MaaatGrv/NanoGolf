@@ -42,6 +42,9 @@ class ViewerGL:
         self.length=0.0
         self.downlength=0.0
         self.menu = 0
+        self.verif=False
+        self.rebond=False
+        self.origin= [ 0. ,  0.4, -5. ]
 
     def run(self):
         # boucle d'affichage
@@ -50,6 +53,8 @@ class ViewerGL:
             GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
 
             self.update_key()
+            self.verif_collision()
+            self.trajectory(5)
             # self.manage_menu()
 
             for obj in self.objs:
@@ -78,6 +83,18 @@ class ViewerGL:
         if key == glfw.KEY_P and action == glfw.PRESS:
             self.power = 0.0
             self.length = 0.0
+
+    def collision(self,L):
+        Xmin=[]
+        Xmax=[]
+        Zmin=[]
+        Zmax=[]
+        for i in range(0,len(L)-1):
+            Xmin.append(L[i][2])
+            Xmax.append(L[i+1][2])
+            Zmin.append(L[i][3])
+            Zmax.append(L[i+1][3])
+        return Xmin,Xmax,Zmin,Zmax
     
     def send_length(self, length):
         pass
@@ -128,6 +145,7 @@ class ViewerGL:
 
     def update_key(self):
         if glfw.KEY_UP in self.touch and self.touch[glfw.KEY_UP] > 0:
+            self.verif=True
             self.objs[0].transformation.translation += \
                 pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, 0.02]))
             self.objs[1].transformation.translation += \
@@ -221,3 +239,19 @@ class ViewerGL:
         #         child_conn.send(self.menu)
         #         child_conn.close()
         pass
+    
+    def verif_collision(self):
+        if self.objs[0].transformation.translation[0] <= -1.25192378 or self.objs[0].transformation.translation[0] >= 12.00292513 or self.objs[0].transformation.translation[2] <=-6.59623226 or self.objs[0].transformation.translation[2] >=-3.87759959:
+            self.rebond=True
+            self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] += 0.15
+            print("collision")
+        else:
+            print("pas de collision")
+    
+    def trajectory(self,a):
+        b=0
+        if self.verif:
+            while a-b>0:
+                self.objs[0].transformation.translation += \
+                    pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, 0.02]))
+                b+=1

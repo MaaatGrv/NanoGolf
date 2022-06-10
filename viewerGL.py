@@ -30,14 +30,14 @@ class ViewerGL:
         self.objs = []
         self.touch = {}
 
-    def run(self,L):
+    def run(self):
         # boucle d'affichage
         while not glfw.window_should_close(self.window):
             # nettoyage de la fenêtre : fond et profondeur
             GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
 
             self.update_key()
-            self.verif_collision(L)
+            self.verif_collision()
 
             for obj in self.objs:
                 GL.glUseProgram(obj.program)
@@ -136,18 +136,8 @@ class ViewerGL:
         self.cam.transformation.rotation_center = self.objs[0].transformation.translation + self.objs[0].transformation.rotation_center
         self.cam.transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([0, 1, 5])
 
-    def verif_collision(self,L):
-        Xmin,Xmax,Zmin,Zmax = self.collision(L)
-        Xzip=zip(Xmin,Zmin)
-        Zzip=zip(Xmax,Zmax)
-
-        # if self.objs[0].transformation.translation[0] = Xmin[0] and self.objs[0].transformation.translation[0] <= Xmax[0] and self.objs[0].transformation.translation[2] >= Zmin[0] and self.objs[0].transformation.translation[2] <= Zmax[0]:
-        #     print("collision")
-        # elif  self.objs[0].transformation.translation[0] >= Xmin[1] and self.objs[0].transformation.translation[0] <= Xmax[1] and self.objs[0].transformation.translation[2] >= Zmin[1] and self.objs[0].transformation.translation[2] <= Zmax[1]:
-        #     print("collision")
-        # elif  self.objs[0].transformation.translation[0] >= Xmin[2] and self.objs[0].transformation.translation[0] <= Xmax[2] and self.objs[0].transformation.translation[2] >= Zmin[2] and self.objs[0].transformation.translation[2] <= Zmax[2]:
-        #     print("collision")
-        # elif  self.objs[0].transformation.translation[0] >= Xmin[3] and self.objs[0].transformation.translation[0] <= Xmax[3] and self.objs[0].transformation.translation[2] >= Zmin[3] and self.objs[0].transformation.translation[2] <= Zmax[3]:
-        #     print("collision")
-        # else:
-        #     print("pas de collision")
+    def verif_collision(self):
+        if self.objs[0].transformation.translation[0] <= -1.25192378 or self.objs[0].transformation.translation[0] >= 12.00292513 or self.objs[0].transformation.translation[2] <=-6.59623226 or self.objs[0].transformation.translation[2] >=-3.87759959:
+            print("collision")
+        else:
+            print("pas de collision")

@@ -171,13 +171,32 @@ class ViewerGL:
                 pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[1].transformation.rotation_euler), pyrr.Vector3([0, 0.048, 0,]))
                 self.downlength+=0.048
 
-    def mouse_button_callback(self, window, button, action, mods):
-        if button == glfw.MOUSE_BUTTON_RIGHT and action == glfw.PRESS:
-            print("got it")
+    # Vérifie que le curseur de la souris est situé sur le bouton
+    def verif_mouse_pos(self,A,B,C):
+        xpos,ypos=glfw.get_cursor_pos(self.window)
+        if A[0] < xpos and B[0] > xpos and A[1] < ypos and C[1] > ypos:
+            return True
+        else:
+            return False
 
-        # xpos,ypos=glfw.get_cursor_pos(self.window)
-        # print(xpos,ypos)
-                
+    def mouse_button_callback(self, window, button, action, mods):
+        if button == glfw.MOUSE_BUTTON_LEFT and action == glfw.PRESS:
+            # Détection des boutons :
+
+            #Bouton 1
+            A1,B1,C1=[11,11],[120,11],[120,58]
+            #Bouton 2
+            A2,B2,C2=[11,75],[120,75],[120,120]
+
+            xpos,ypos=glfw.get_cursor_pos(self.window)
+            print(xpos,ypos)
+
+            if self.verif_mouse_pos(A1,B1,C1) == True:
+                print("Bouton 1")
+            
+            if self.verif_mouse_pos(A2,B2,C2) == True:
+                print("Bouton 2")
+
     def calculate_bar_length(self):
         lmax = 5
         powermax=100

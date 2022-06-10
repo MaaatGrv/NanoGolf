@@ -31,7 +31,7 @@ class ViewerGL:
         self.touch = {}
         self.verif=False
         self.rebond=False
-        self.origin= [ 0. ,  0.4, -5. ]
+        self.origin= np.array([ 6 ,  0.4, -5. ])
 
     def run(self):
         # boucle d'affichage
@@ -114,7 +114,8 @@ class ViewerGL:
         if glfw.KEY_UP in self.touch and self.touch[glfw.KEY_UP] > 0:
             self.verif=True
             # self.objs[0].transformation.translation += \
-            #     pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, 0.2]))          
+            #    pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, 0.2]))   
+            # print(self.objs[0].transformation.translation)    
         if glfw.KEY_DOWN in self.touch and self.touch[glfw.KEY_DOWN] > 0:
             self.objs[0].transformation.translation -= \
                 pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, 0.02]))
@@ -142,11 +143,15 @@ class ViewerGL:
     def verif_collision(self):
         if self.objs[0].transformation.translation[0] <= -1.25192378 or self.objs[0].transformation.translation[0] >= 12.00292513 or self.objs[0].transformation.translation[2] <=-6.59623226 or self.objs[0].transformation.translation[2] >=-3.87759959:
             self.rebond=True
-            self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] += 0.15
+            H=np.array([self.objs[0].transformation.translation[0],self.origin[1],self.origin[2]]) #projeter de l'origine 
+            print("origin",self.origin)
+            print("H",H)
+            dist1 = np.linalg.norm(self.objs[0].transformation.translation-self.origin)
+            dist2= np.linalg.norm(H-self.origin)
+            angle=np.arccos(dist2/dist1)
+            print("angle",angle)
+            self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] -= angle
             
-            print("collision")
-        else:
-            print("pas de collision")
 
     def trajectory(self,a):
         b=0

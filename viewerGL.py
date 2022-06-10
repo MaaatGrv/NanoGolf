@@ -45,8 +45,10 @@ class ViewerGL:
         self.verif=False
         self.rebond=False
         self.origin= [ 0. ,  0.4, -5. ]
+        self.shot=0
 
     def run(self):
+        self.init_context()
         # boucle d'affichage
         while not glfw.window_should_close(self.window):
             # nettoyage de la fenêtre : fond et profondeur
@@ -54,7 +56,7 @@ class ViewerGL:
 
             self.update_key()
             self.verif_collision()
-            self.trajectory(5)
+            self.trajectory()
             # self.manage_menu()
 
             for obj in self.objs:
@@ -75,11 +77,13 @@ class ViewerGL:
         self.touch[key] = action
 
         if key == glfw.KEY_P and action == glfw.RELEASE:
-            print("LONGUEUR FINALE:" + str(self.length))
+            print("Puissance finale", self.power)
             time.sleep(1)
             self.objs[1].transformation.translation -= \
                 pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[1].transformation.rotation_euler), pyrr.Vector3([0, self.downlength, 0,]))
             self.downlength = 0.0
+            self.shot=0
+
         if key == glfw.KEY_P and action == glfw.PRESS:
             self.power = 0.0
             self.length = 0.0
@@ -145,7 +149,7 @@ class ViewerGL:
 
     def update_key(self):
         if glfw.KEY_UP in self.touch and self.touch[glfw.KEY_UP] > 0:
-            self.verif=True
+            # self.verif=True
             self.objs[0].transformation.translation += \
                 pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, 0.02]))
             self.objs[1].transformation.translation += \
@@ -182,12 +186,30 @@ class ViewerGL:
             self.cam.transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([0, 1, 5])
 
         if glfw.KEY_P in self.touch and self.touch[glfw.KEY_P] > 0:
-            self.power+=1.2
             self.calculate_bar_length()
+            if self.power  < 100:
+                self.power+=1.2
+            else:
+                self.power = 100
             if self.length < 5:
                 self.objs[1].transformation.translation += \
                 pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[1].transformation.rotation_euler), pyrr.Vector3([0, 0.048, 0,]))
                 self.downlength+=0.048
+
+    def calculate_bar_length(self):
+        lmax = 5
+        powermax=100
+        if self.power  < powermax:
+            self.length = (self.power*lmax)/powermax
+        else :
+            self.length = lmax
+        print(self.length)
+    
+    # Initialise la position de la balle
+    def init_context(self):
+        self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] -= np.pi/2
+        self.objs[1].transformation.rotation_euler[pyrr.euler.index().yaw] -= np.pi/2
+        self.update_cam()   
 
     # Vérifie que le curseur de la souris est situé sur le bouton
     def verif_mouse_pos(self,A,B,C):
@@ -216,42 +238,29 @@ class ViewerGL:
                 print('Bouton Quitter')
                 glfw.set_window_should_close(window, glfw.TRUE)
 
-    def calculate_bar_length(self):
-        lmax = 5
-        powermax=100
-        if self.power  < powermax:
-            self.length = (self.power*lmax)/powermax
-        else :
-            self.length = lmax
-        print(self.length)
-    
-    def manage_menu(self, child_conn):
-        # if self.menu == 0 :
-        #     if glfw.KEY_Y in self.touch and self.touch[glfw.KEY_Y] > 0:
-        #         self.menu = 1
-        #         print("Menu : 1")
-        #         child_conn.send(self.menu)
-        #         child_conn.close()
-        # if self.menu == 1 :
-        #     if glfw.KEY_T in self.touch and self.touch[glfw.KEY_T] > 0:
-        #         self.menu = 0
-        #         print("Menu : 0")
-        #         child_conn.send(self.menu)
-        #         child_conn.close()
-        pass
-    
+    #############################################################################
+    # Gestion des collisions
     def verif_collision(self):
         if self.objs[0].transformation.translation[0] <= -1.25192378 or self.objs[0].transformation.translation[0] >= 12.00292513 or self.objs[0].transformation.translation[2] <=-6.59623226 or self.objs[0].transformation.translation[2] >=-3.87759959:
             self.rebond=True
-            self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] += 0.15
+            self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] += 0.25
             print("collision")
-        else:
-            print("pas de collision")
     
-    def trajectory(self,a):
-        b=0
-        if self.verif:
-            while a-b>0:
-                self.objs[0].transformation.translation += \
-                    pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, 0.02]))
-                b+=1
+    #############################################################################
+    # Gestion du mouvement de la balle
+    def trajectory(self):
+        self.shot+=1
+        if self.shot < self.power:
+            tr = (self.power*0.09)/100 
+            self.objs[0].transformation.translation += \
+                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, tr]))
+            self.objs[1].transformation.translation += \
+                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[1].transformation.rotation_euler), pyrr.Vector3([0, 0, tr]))
+            self.update_cam()
+
+    # def shoot_timer(self):
+    #     if self.shot == True:
+    #         print("dodo")
+    #         time.sleep(int((self.power)/10))
+    #         print("fin dodo")
+    #         self.shot = False

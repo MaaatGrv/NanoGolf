@@ -98,6 +98,18 @@ def main():
     o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program2barkac_id, texture, tr)
     viewer.add_object(o)
 
+    # Quit Button text
+    vao = Text.initalize_geometry()
+    texture = glutils.load_texture('fontB.jpg')
+    o = Text('QUITTER', np.array([-0.97, 0.7], np.float32), np.array([-0.7, 0.83], np.float32), vao, 2, programGUI_id, texture)
+    viewer.add_object(o)
+
+    # New Game text
+    vao = Text.initalize_geometry()
+    texture = glutils.load_texture('fontB.jpg')
+    o = Text('REJOUER', np.array([-0.98, 0.85], np.float32), np.array([-0.7, 0.98], np.float32), vao, 2, programGUI_id, texture)
+    viewer.add_object(o)
+
     m = Mesh()
     p0, p1, p2, p3 = [-25, 0, -25], [25, 0, -25], [25, 0, 25], [-25, 0, 25]
     n, c = [0, 1, 0], [1, 1, 1]

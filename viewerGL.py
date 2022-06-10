@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
+import multiprocessing
 from operator import length_hint
+from tkinter import Menu
 from turtle import update
 import OpenGL.GL as GL
 import glfw
@@ -8,6 +10,7 @@ import pyrr
 import numpy as np
 from cpe3d import Object3D
 import time
+from multiprocessing import Process, Queue, Pipe
 
 class ViewerGL:
     def __init__(self):
@@ -37,6 +40,7 @@ class ViewerGL:
         self.power=0.0
         self.length=0.0
         self.downlength=0.0
+        self.menu = 0
 
     def run(self):
         # boucle d'affichage
@@ -45,6 +49,7 @@ class ViewerGL:
             GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
 
             self.update_key()
+            # self.manage_menu()
 
             for obj in self.objs:
                 GL.glUseProgram(obj.program)
@@ -173,3 +178,18 @@ class ViewerGL:
         else :
             self.length = lmax
         print(self.length)
+    
+    def manage_menu(self, child_conn):
+        # if self.menu == 0 :
+        #     if glfw.KEY_Y in self.touch and self.touch[glfw.KEY_Y] > 0:
+        #         self.menu = 1
+        #         print("Menu : 1")
+        #         child_conn.send(self.menu)
+        #         child_conn.close()
+        # if self.menu == 1 :
+        #     if glfw.KEY_T in self.touch and self.touch[glfw.KEY_T] > 0:
+        #         self.menu = 0
+        #         print("Menu : 0")
+        #         child_conn.send(self.menu)
+        #         child_conn.close()
+        pass

@@ -105,7 +105,7 @@ def main():
     o = Text('Golf', np.array([-0.5, -0.2], np.float32), np.array([0.5, 0.3], np.float32), vao, 2, programGUI_id, texture)
     viewer.add_object(o)
 
-    viewer.run(collision_box)
+    viewer.run()
 
 
 if __name__ == '__main__':

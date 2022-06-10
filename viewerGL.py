@@ -68,7 +68,11 @@ class ViewerGL:
         Zmax.append(L[1][1])
         for i in range(len(L)+1):
             Xmin.append(L[i][2])
-            Xmax.append(L[i+1][1])
+            Xmax.append(L[i+1][2])
+            Zmin.append(L[i][3])
+            Zmax.append(L[i+1][3])
+        return Xmin,Xmax,Zmin,Zmax
+
 
     def add_object(self, obj):
         self.objs.append(obj)
@@ -107,10 +111,11 @@ class ViewerGL:
             print("Pas de variable uniforme : projection")
         GL.glUniformMatrix4fv(loc, 1, GL.GL_FALSE, self.cam.projection)
 
-    def update_key(self):
+    def update_key(self,L):
+        Xmin,Xmax,Zmin,Zmax = self.collision(self,L)
         if glfw.KEY_UP in self.touch and self.touch[glfw.KEY_UP] > 0:
             self.objs[0].transformation.translation += \
-                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, 0.02]))
+                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, 0.02]))          
             print(self.objs[0].transformation.translation)
         if glfw.KEY_DOWN in self.touch and self.touch[glfw.KEY_DOWN] > 0:
             self.objs[0].transformation.translation -= \
@@ -137,3 +142,11 @@ class ViewerGL:
         self.cam.transformation.rotation_euler[pyrr.euler.index().yaw] += np.pi
         self.cam.transformation.rotation_center = self.objs[0].transformation.translation + self.objs[0].transformation.rotation_center
         self.cam.transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([0, 1, 5])
+
+    def verif_collision(self,L):
+        Xmin,Xmax,Zmin,Zmax = self.collision(self,L)
+        for x in Xmin :
+            if x < -0.5 :
+                return True
+        if self.objs[0].transformation.translation[0] < Xmin[0]: #self.objs[0].transformation.translation[0] => coordonne en x de translation
+            self.objs[0].transformation.translation[0] = Xmin[0]

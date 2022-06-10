@@ -23,7 +23,6 @@ def main():
     programGUI_id = glutils.create_program_from_file('gui.vert', 'gui.frag')
     program2dbar_id = glutils.create_program_from_file('bar.vert', 'bar.frag')
     program2barkac_id = glutils.create_program_from_file('barkac.vert', 'barkac.frag')
-    program2dbutton_id = glutils.create_program_from_file('button.vert', 'button.frag')
 
     #Récupère Tr de Steg mais ne l'affiche pas
     m = Mesh.load_obj('stegosaurus.obj')
@@ -149,13 +148,6 @@ def main():
     texture = glutils.load_texture('grass.jpg')
     o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, Transformation3D())
     viewer.add_object(o)
-
-    # vao = Text.initalize_geometry()
-    # texture = glutils.load_texture('fontB.jpg')
-    # o = Text('Bonjour les', np.array([-0.8, 0.3], np.float32), np.array([0.8, 0.8], np.float32), vao, 2, programGUI_id, texture)
-    # viewer.add_object(o)
-    # o = Text('3ETI', np.array([-0.5, -0.2], np.float32), np.array([0.5, 0.3], np.float32), vao, 2, programGUI_id, texture)
-    # viewer.add_object(o)
 
     collision_box=[]
 

@@ -23,6 +23,7 @@ def main():
     programGUI_id = glutils.create_program_from_file('gui.vert', 'gui.frag')
     program2dbar_id = glutils.create_program_from_file('bar.vert', 'bar.frag')
     program2barkac_id = glutils.create_program_from_file('barkac.vert', 'barkac.frag')
+    program2dbutton_id = glutils.create_program_from_file('button.vert', 'button.frag')
 
     m = Mesh.load_obj('stegosaurus.obj')
     m.normalize()
@@ -73,6 +74,29 @@ def main():
     o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program2barkac_id, texture, tr)
     viewer.add_object(o)
 
+    #Add some buttons
+
+    # New Game Button
+    m=Mesh()
+    p0, p1, p2, p3 = [3.1, 5.1-T, 0.9], [3.1, 4.7-T, 0.9], [2.2, 4.7-T, 0.9], [2.2, 5.1-T, 0.9]
+    n, c = [0, 1, 0], [1, 1, 1]
+    t0, t1, t2, t3 = [0, 0], [1, 0], [1, 1], [0, 1]
+    m.vertices = np.array([[p0 + n + c + t0], [p1 + n + c + t1], [p2 + n + c + t2], [p3 + n + c + t3]], np.float32)
+    m.faces = np.array([[0, 1, 2], [0, 2, 3]], np.uint32)
+    texture = glutils.load_texture('white.jpg')
+    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program2barkac_id, texture, tr)
+    viewer.add_object(o)
+
+    # Quit Button
+    m=Mesh()
+    p0, p1, p2, p3 = [3.1, 4.6-T, 0.9], [3.1, 4.2-T, 0.9], [2.2, 4.2-T, 0.9], [2.2, 4.6-T, 0.9]
+    n, c = [0, 1, 0], [1, 1, 1]
+    t0, t1, t2, t3 = [0, 0], [1, 0], [1, 1], [0, 1]
+    m.vertices = np.array([[p0 + n + c + t0], [p1 + n + c + t1], [p2 + n + c + t2], [p3 + n + c + t3]], np.float32)
+    m.faces = np.array([[0, 1, 2], [0, 2, 3]], np.uint32)
+    texture = glutils.load_texture('white.jpg')
+    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program2barkac_id, texture, tr)
+    viewer.add_object(o)
 
     m = Mesh()
     p0, p1, p2, p3 = [-25, 0, -25], [25, 0, -25], [25, 0, 25], [-25, 0, 25]

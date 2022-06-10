@@ -26,6 +26,7 @@ class ViewerGL:
         self.window = glfw.create_window(800, 800, 'OpenGL', None, None)
         # paramétrage de la fonction de gestion des évènements
         glfw.set_key_callback(self.window, self.key_callback)
+        glfw.set_mouse_button_callback(self.window, self.mouse_button_callback)
         # activation du context OpenGL pour la fenêtre
         glfw.make_context_current(self.window)
         glfw.swap_interval(1)
@@ -169,6 +170,13 @@ class ViewerGL:
                 self.objs[1].transformation.translation += \
                 pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[1].transformation.rotation_euler), pyrr.Vector3([0, 0.048, 0,]))
                 self.downlength+=0.048
+
+    def mouse_button_callback(self, window, button, action, mods):
+        if button == glfw.MOUSE_BUTTON_RIGHT and action == glfw.PRESS:
+            print("got it")
+
+        # xpos,ypos=glfw.get_cursor_pos(self.window)
+        # print(xpos,ypos)
                 
     def calculate_bar_length(self):
         lmax = 5

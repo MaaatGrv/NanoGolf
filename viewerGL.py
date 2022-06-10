@@ -57,6 +57,19 @@ class ViewerGL:
             glfw.set_window_should_close(win, glfw.TRUE)
         self.touch[key] = action
     
+    def collision(self,L):
+        Xmin=[]
+        Xmax=[]
+        Zmin=[]
+        Zmax=[]
+        Xmin.append(L[0][0])
+        Xmax.append(L[1][0])
+        Zmin.append(L[0][1])
+        Zmax.append(L[1][1])
+        for i in range(len(L)+1):
+            Xmin.append(L[i][2])
+            Xmax.append(L[i+1][1])
+
     def add_object(self, obj):
         self.objs.append(obj)
 

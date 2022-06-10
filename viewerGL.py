@@ -195,7 +195,8 @@ class ViewerGL:
                 print("Bouton 1")
             
             if self.verif_mouse_pos(A2,B2,C2) == True:
-                print("Bouton 2")
+                print('Bouton Quitter')
+                glfw.set_window_should_close(window, glfw.TRUE)
 
     def calculate_bar_length(self):
         lmax = 5

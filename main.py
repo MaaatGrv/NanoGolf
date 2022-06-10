@@ -6,6 +6,9 @@ from cpe3d import Object3D, Camera, Transformation3D, Text
 import numpy as np
 import OpenGL.GL as GL
 import pyrr
+import time
+import glfw
+from multiprocessing import Process, Queue, Pipe
 
 def main():
     viewer = ViewerGL()
@@ -46,7 +49,6 @@ def main():
     tr_bar.rotation_center.z = 0.2
     o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program2dbar_id, texture, tr_bar)
     viewer.add_object(o)
-
 
     # This is the back of the bar
     m = Mesh()
@@ -91,6 +93,10 @@ def main():
 
     viewer.run()
 
+def menu():
+    window = ViewerGL()
+    window.set_camera(Camera)
+    window.run()
 
 if __name__ == '__main__':
     main()

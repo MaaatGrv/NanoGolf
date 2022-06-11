@@ -169,7 +169,7 @@ def main():
         o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
         viewer.add_object(o)
     
-    m = Mesh.load_obj('hole_round.obj')
+    m = Mesh.load_obj('hole_square.obj')
     m.normalize()
     m.apply_matrix(pyrr.matrix44.create_from_scale([2, 2, 2, 1])) #changer la taille de la sphere
     tr = Transformation3D()

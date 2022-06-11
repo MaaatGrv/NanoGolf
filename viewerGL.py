@@ -11,6 +11,7 @@ import numpy as np
 from cpe3d import Object3D
 import time
 from multiprocessing import Process, Queue, Pipe
+import math
 
 class ViewerGL:
     def __init__(self):
@@ -34,7 +35,7 @@ class ViewerGL:
         GL.glEnable(GL.GL_DEPTH_TEST)
         # choix de la couleur de fond
         GL.glClearColor(0.5, 0.6, 0.9, 1.0)
-        print(f"OpenGL: {GL.glGetString(GL.GL_VERSION).decode('ascii')}")
+        print(f"NanoGolf: {GL.glGetString(GL.GL_VERSION).decode('ascii')}")
 
         self.objs = []
         self.touch = {}
@@ -44,8 +45,13 @@ class ViewerGL:
         self.menu = 0
         self.verif=False
         self.rebond=False
-        self.origin= [ 0. ,  0.4, -5. ]
+        self.origin= np.array([ 6 ,  0.4, -5. ])
         self.shot=0
+        self.t0=0
+        self.t1=0
+        self.translation=[]
+        self.rotation=[]
+        self.replay = False
 
     def run(self):
         self.init_context()
@@ -149,26 +155,14 @@ class ViewerGL:
 
     def update_key(self):
         if glfw.KEY_UP in self.touch and self.touch[glfw.KEY_UP] > 0:
-            # self.verif=True
-            self.objs[0].transformation.translation += \
-                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, 0.02]))
-            self.objs[1].transformation.translation += \
-                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[1].transformation.rotation_euler), pyrr.Vector3([0, 0, 0.02]))
-            self.update_cam()
+            self.mvmt_translation(0.02)
         if glfw.KEY_DOWN in self.touch and self.touch[glfw.KEY_DOWN] > 0:
-            self.objs[0].transformation.translation -= \
-                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, 0.02]))
-            self.objs[1].transformation.translation -= \
-                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[1].transformation.rotation_euler), pyrr.Vector3([0, 0, 0.02]))
-            self.update_cam()
+            self.mvmt_translation(-0.02)
+
         if glfw.KEY_LEFT in self.touch and self.touch[glfw.KEY_LEFT] > 0:
-            self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] -= 0.1
-            self.objs[1].transformation.rotation_euler[pyrr.euler.index().yaw] -= 0.1
-            self.update_cam()
+            self.mvmt_rotation(-0.05)
         if glfw.KEY_RIGHT in self.touch and self.touch[glfw.KEY_RIGHT] > 0:
-            self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] += 0.1
-            self.objs[1].transformation.rotation_euler[pyrr.euler.index().yaw] += 0.1
-            self.update_cam()
+            self.mvmt_rotation(0.05)
             
         if glfw.KEY_I in self.touch and self.touch[glfw.KEY_I] > 0:
             self.cam.transformation.rotation_euler[pyrr.euler.index().roll] -= 0.1
@@ -229,34 +223,61 @@ class ViewerGL:
             A2,B2,C2=[11,75],[120,75],[120,120]
 
             xpos,ypos=glfw.get_cursor_pos(self.window)
-            print(xpos,ypos)
 
             if self.verif_mouse_pos(A1,B1,C1) == True:
-                print("Bouton 1")
+                self.replay=True
+                print("Bouton Rejouer")
+                for i in range(len(self.translation)):
+                    self.mvmt_translation(-self.translation[-(i+1)])
+                for k in range(len(self.rotation)):
+                    self.mvmt_rotation(-self.rotation[-(k+1)])
+                self.translation=[]
+                self.rotation=[]
+                self.replay=False
             
             if self.verif_mouse_pos(A2,B2,C2) == True:
                 print('Bouton Quitter')
                 glfw.set_window_should_close(window, glfw.TRUE)
 
-    #############################################################################
     # Gestion des collisions
     def verif_collision(self):
+        # if not self.replay:
         if self.objs[0].transformation.translation[0] <= -1.25192378 or self.objs[0].transformation.translation[0] >= 12.00292513 or self.objs[0].transformation.translation[2] <=-6.59623226 or self.objs[0].transformation.translation[2] >=-3.87759959:
-            self.rebond=True
-            self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] += 0.25
-            print("collision")
+            H=np.array([self.objs[0].transformation.translation[0],self.origin[1],self.origin[2]]) #projeter de l'origine 
+            dist1 = np.linalg.norm(self.objs[0].transformation.translation-self.origin)
+            dist2= np.linalg.norm(H-self.origin)
+            angle=np.arccos(dist2/dist1)
+            self.mvmt_rotation(angle)
     
-    #############################################################################
     # Gestion du mouvement de la balle
     def trajectory(self):
-        self.shot+=1
+        self.shot+=0.5
         if self.shot < self.power:
-            tr = (self.power*0.09)/100 
-            self.objs[0].transformation.translation += \
-                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, tr]))
-            self.objs[1].transformation.translation += \
-                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[1].transformation.rotation_euler), pyrr.Vector3([0, 0, tr]))
-            self.update_cam()
+            self.t1=time.time()
+            # Variables
+            v0= self.power * 0.8
+            f=30.0
+            m=0.05
+            Tau=m/f
+            tr = Tau*v0*(math.exp((-self.t0)/Tau)-math.exp((-self.t1)/Tau))
+            self.mvmt_translation(tr)
+        self.tO=time.time()
+
+    def mvmt_translation(self,tr):
+        self.objs[0].transformation.translation += \
+            pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, tr]))
+        self.objs[1].transformation.translation += \
+            pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[1].transformation.rotation_euler), pyrr.Vector3([0, 0, tr]))
+        self.update_cam()
+        self.translation.append(tr)
+    
+    def mvmt_rotation(self,angle):
+        self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] += angle
+        self.objs[1].transformation.rotation_euler[pyrr.euler.index().yaw] += angle
+        self.update_cam()
+        self.rotation.append(angle)
+
+
 
     # def shoot_timer(self):
     #     if self.shot == True:

@@ -96,23 +96,16 @@ def main():
     
     
     
-    end_time = glfw.GetTime()
+
     vao = Text.initalize_geometry()
     texture = glutils.load_texture('fontB.jpg')
     o = Text('Nano ', np.array([-0.8, 0.3], np.float32), np.array([0.8, 0.8], np.float32), vao, 2, programGUI_id, texture)
     viewer.add_object(o)
-    if end_time-current_time == 10:
-        viewer.delete_object(o)
-    else:
-        end_time = glfw.GetTime()
+
 
     o = Text('Golf', np.array([-0.5, -0.2], np.float32), np.array([0.5, 0.3], np.float32), vao, 2, programGUI_id, texture)
     viewer.add_object(o)
-    if end_time-current_time == 10:
-        viewer.delete_object(o)
-    else:
-        end_time = glfw.GetTime()
-        
+
 
     viewer.run()
 

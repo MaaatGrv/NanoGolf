@@ -114,6 +114,9 @@ class ViewerGL:
 
     def set_camera(self, cam):
         self.cam = cam
+    
+    def delete_object(self, obj):
+       self.objs.remove(obj)
 
     def update_camera(self, prog):
         GL.glUseProgram(prog)
@@ -242,12 +245,17 @@ class ViewerGL:
     # Gestion des collisions
     def verif_collision(self):
         # if not self.replay:
-        if self.objs[0].transformation.translation[0] <= -1.25192378 or self.objs[0].transformation.translation[0] >= 12.00292513 or self.objs[0].transformation.translation[2] <=-6.59623226 or self.objs[0].transformation.translation[2] >=-3.87759959:
+        if self.objs[0].transformation.translation[2] <=-6.59623226 or self.objs[0].transformation.translation[2] >=-3.87759959:
             H=np.array([self.objs[0].transformation.translation[0],self.origin[1],self.origin[2]]) #projeter de l'origine 
             dist1 = np.linalg.norm(self.objs[0].transformation.translation-self.origin)
             dist2= np.linalg.norm(H-self.origin)
             angle=np.arccos(dist2/dist1)
-            self.mvmt_rotation(angle)
+            self.mvmt_rotation(-angle)
+
+        if self.objs[0].transformation.translation[0] <= -1.25192378:
+            self.mvmt_rotation(0.5)
+        if self.objs[0].transformation.translation[0] >= 13.22652818:
+            self.mvmt_translation(-0.5)
     
     # Gestion du mouvement de la balle
     def trajectory(self):
@@ -276,8 +284,6 @@ class ViewerGL:
         self.objs[1].transformation.rotation_euler[pyrr.euler.index().yaw] += angle
         self.update_cam()
         self.rotation.append(angle)
-
-
 
     # def shoot_timer(self):
     #     if self.shot == True:

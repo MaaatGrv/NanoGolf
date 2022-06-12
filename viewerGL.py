@@ -8,10 +8,13 @@ import OpenGL.GL as GL
 import glfw
 import pyrr
 import numpy as np
-from cpe3d import Object3D
+from cpe3d import Object3D, Text
 import time
 from multiprocessing import Process, Queue, Pipe
 import math
+import glutils
+from threading import Timer
+
 
 class ViewerGL:
     def __init__(self):
@@ -38,6 +41,7 @@ class ViewerGL:
         print(f"NanoGolf: {GL.glGetString(GL.GL_VERSION).decode('ascii')}")
 
         self.objs = []
+        self.new_scene=[]
         self.touch = {}
         self.power=0.0
         self.length=0.0
@@ -52,8 +56,13 @@ class ViewerGL:
         self.translation=[]
         self.rotation=[]
         self.replay = False
+        self.removed = []
+        self.to_add=[]
+        self.WinTextAdded = False
+        self.start=0
+        self.end=0
 
-    def run(self):
+    def run(self,L1,L2):
         self.init_context()
         # boucle d'affichage
         while not glfw.window_should_close(self.window):
@@ -63,7 +72,19 @@ class ViewerGL:
             self.update_key()
             self.verif_collision()
             self.trajectory()
-            # self.manage_menu()
+            self.toucher_drapeau(L1,L2)
+
+            # Gestion du timer pour le Win Text
+            if self.WinTextAdded == True :
+                if self.start ==0:
+                    self.start = time.time()
+                self.end = time.time()
+                if self.start != 0 :
+                    print('wait')
+                    if self.end-self.start > 3 :
+                        self.delete_object(self.objs[-1])
+                        self.WinTextAdded = False
+                        self.start=0
 
             for obj in self.objs:
                 GL.glUseProgram(obj.program)
@@ -94,6 +115,14 @@ class ViewerGL:
             self.power = 0.0
             self.length = 0.0
 
+        if key == glfw.KEY_Q and action == glfw.PRESS:
+            for i in range(len(self.objs)):
+                self.delete_object(self.objs[0])
+
+        if key == glfw.KEY_W and action == glfw.PRESS:
+            for i in range(len(self.new_scene)):
+                self.add_object(self.new_scene[i])
+
     def collision(self,L):
         Xmin=[]
         Xmax=[]
@@ -111,12 +140,19 @@ class ViewerGL:
 
     def add_object(self, obj):
         self.objs.append(obj)
+        if not self.WinTextAdded :
+            if not self.replay :
+                self.new_scene.append(obj)
+    
+    def add_future_object(self, obj):
+        self.to_add.append(obj)
 
     def set_camera(self, cam):
         self.cam = cam
     
     def delete_object(self, obj):
-       self.objs.remove(obj)
+        self.removed.append(obj)
+        self.objs.remove(obj)
 
     def update_camera(self, prog):
         GL.glUseProgram(prog)
@@ -148,6 +184,25 @@ class ViewerGL:
         if (loc == -1) :
             print("Pas de variable uniforme : projection")
         GL.glUniformMatrix4fv(loc, 1, GL.GL_FALSE, self.cam.projection)
+
+    def gagner(self, L1, L2):
+        xmin=[]
+        xmax=[]
+        zmin=[]
+        zmax=[]
+        xmin.append(L1[0][0])
+        xmax.append(L2[1][0])
+        zmax.append(L1[1][2])
+        zmin.append(L2[0][2])
+        return(xmin,xmax,zmin,zmax)
+
+    def toucher_drapeau(self, L1, L2):
+        n=0
+        xmin,xmax,zmin,zmax=self.gagner(L1,L2)
+        if len(self.objs) > 0:
+            if self.objs[0].transformation.translation[0]>xmin[0] and self.objs[0].transformation.translation[0]<xmax[0] and self.objs[0].transformation.translation[2]>zmin[0] and self.objs[0].transformation.translation[2]<zmax[0] and self.WinTextAdded==False :
+                self.add_object(self.to_add[0])
+                self.WinTextAdded=True
     
     def update_cam(self):
         #Adaptation de la caméra
@@ -200,7 +255,6 @@ class ViewerGL:
             self.length = (self.power*lmax)/powermax
         else :
             self.length = lmax
-        print(self.length)
     
     # Initialise la position de la balle
     def init_context(self):
@@ -230,12 +284,7 @@ class ViewerGL:
             if self.verif_mouse_pos(A1,B1,C1) == True:
                 self.replay=True
                 print("Bouton Rejouer")
-                for i in range(len(self.translation)):
-                    self.mvmt_translation(-self.translation[-(i+1)])
-                for k in range(len(self.rotation)):
-                    self.mvmt_rotation(-self.rotation[-(k+1)])
-                self.translation=[]
-                self.rotation=[]
+                self.go_to_origin()
                 self.replay=False
             
             if self.verif_mouse_pos(A2,B2,C2) == True:
@@ -244,19 +293,27 @@ class ViewerGL:
 
     # Gestion des collisions
     def verif_collision(self):
-        # if not self.replay:
-        if self.objs[0].transformation.translation[2] <=-6.59623226 or self.objs[0].transformation.translation[2] >=-3.87759959:
-            H=np.array([self.objs[0].transformation.translation[0],self.origin[1],self.origin[2]]) #projeter de l'origine 
-            dist1 = np.linalg.norm(self.objs[0].transformation.translation-self.origin)
-            dist2= np.linalg.norm(H-self.origin)
-            angle=np.arccos(dist2/dist1)
-            self.mvmt_rotation(-angle)
+        if not self.replay:
+            if len(self.objs) > 0:
+                if self.objs[0].transformation.translation[2] <=-6.59623226 or self.objs[0].transformation.translation[2] >=-3.87759959:
+                    H=np.array([self.objs[0].transformation.translation[0],self.origin[1],self.origin[2]]) #projeter de l'origine 
+                    dist1 = np.linalg.norm(self.objs[0].transformation.translation-self.origin)
+                    dist2= np.linalg.norm(H-self.origin)
+                    angle=np.arccos(dist2/dist1)
+                    self.mvmt_rotation(-angle)
 
-        if self.objs[0].transformation.translation[0] <= -1.25192378:
-            self.mvmt_rotation(0.5)
-        if self.objs[0].transformation.translation[0] >= 13.22652818:
-            self.mvmt_translation(-0.5)
+                if self.objs[0].transformation.translation[0] <= -1.25192378:
+                    self.mvmt_rotation(0.5)
+                if self.objs[0].transformation.translation[0] >= 13.22652818:
+                    self.mvmt_translation(-0.5)
     
+    def go_to_origin(self):
+        for i in range(len(self.objs)):
+            self.delete_object(self.objs[0])
+        for i in range(len(self.new_scene)):
+            self.add_object(self.new_scene[i])
+            print('add')
+
     # Gestion du mouvement de la balle
     def trajectory(self):
         self.shot+=0.5
@@ -284,10 +341,3 @@ class ViewerGL:
         self.objs[1].transformation.rotation_euler[pyrr.euler.index().yaw] += angle
         self.update_cam()
         self.rotation.append(angle)
-
-    # def shoot_timer(self):
-    #     if self.shot == True:
-    #         print("dodo")
-    #         time.sleep(int((self.power)/10))
-    #         print("fin dodo")
-    #         self.shot = False

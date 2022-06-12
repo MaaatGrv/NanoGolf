@@ -194,7 +194,26 @@ def main():
     o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
     viewer.add_object(o)
 
-    viewer.run()
+    # Win Text
+    vao = Text.initalize_geometry()
+    texture = glutils.load_texture('fontB.jpg')
+    o = Text('Félicitations',  np.array([-0.5, -0.2], np.float32), np.array([0.5, 0.3], np.float32), vao, 2, programGUI_id, texture)
+    viewer.add_future_object(o)
+
+    minaabb=np.amin(m.vertices,axis=0)[:3]
+    maxaabb=np.amax(m.vertices,axis=0)[:3]
+    AABB=[minaabb, maxaabb]
+    CCDD=[[0,0,0],[0,0,0]]
+    AABB[0][0]=AABB[0][0]+12
+    AABB[1][0]=AABB[1][0]+12
+    AABB[0][2]=AABB[0][2]-4.3
+    AABB[1][2]=AABB[1][2]-4.3
+    CCDD[0][0]=AABB[0][0]
+    CCDD[1][0]=AABB[1][0]+2*(maxaabb[0]-12)
+    CCDD[0][2]=AABB[0][2]+(minaabb[2]+4.3) 
+    CCDD[1][2]=AABB[1][2]
+
+    viewer.run(AABB,CCDD)
 
 def menu():
     window = ViewerGL()

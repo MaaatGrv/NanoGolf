@@ -43,7 +43,8 @@ def main():
 
     # This is the front of the bar
     m = Mesh()
-    p0, p1, p2, p3 = [-2.7, 0, 1], [-2.7, -4, 1], [-2.4, -4, 1], [-2.4, 0, 1]
+    Tx=1.5
+    p0, p1, p2, p3 = [-2.-Tx, 4.4, 1], [-2.-Tx, 4.1, 1], [-6.-Tx, 4.1, 1], [-6.-Tx, 4.4, 1]
     n, c = [0, 1, 0], [1, 1, 1]
     t0, t1, t2, t3 = [0, 0], [1, 0], [1, 1], [0, 1]
     m.vertices = np.array([[p0 + n + c + t0], [p1 + n + c + t1], [p2 + n + c + t2], [p3 + n + c + t3]], np.float32)
@@ -57,8 +58,9 @@ def main():
 
     # This is the back of the bar
     Tb=0.6 # Add translation to set it up
+    T2=1.0
     m = Mesh()
-    p0, p1, p2, p3 = [-2.79, 3.1+Tb, 1.1], [-2.79, -2.2+Tb, 1.1], [-2.4, -2.2+Tb, 1.1], [-2.4, 3.1+Tb, 1.1] # possibilité de mettre y=0
+    p0, p1, p2, p3 = [Tb, 5.1-T2, 1.1], [Tb, 4.7-T2, 1.1], [-5.3+Tb, 4.7-T2, 1.1], [-5.3+Tb, 5.1-T2, 1.1] # possibilité de mettre y=0
     n, c = [0, 1, 0], [1, 1, 1]
     t0, t1, t2, t3 = [0, 0], [1, 0], [1, 1], [0, 1]
     m.vertices = np.array([[p0 + n + c + t0], [p1 + n + c + t1], [p2 + n + c + t2], [p3 + n + c + t3]], np.float32)
@@ -69,8 +71,8 @@ def main():
 
     # Add a little white triangle in front
     m = Mesh()
-    T = tr.translation.y 
-    p0, p1, p2, p3 = [-2.69, 0.07-T, 0.9], [-2.69, 0-T, 0.9], [-2.315, 0-T, 0.9], [-2.315, 0.07-T, 0.9]
+    T = 0.1 
+    p0, p1, p2, p3 = [-4, 5.05-T2-T, 0.9], [-4, 4.75-T2-T, 0.9], [-3.1, 4.75-T2-T, 0.9], [-3.1, 5.05-T2-T, 0.9]
     n, c = [0, 1, 0], [1, 1, 1]
     t0, t1, t2, t3 = [0, 0], [1, 0], [1, 1], [0, 1]
     m.vertices = np.array([[p0 + n + c + t0], [p1 + n + c + t1], [p2 + n + c + t2], [p3 + n + c + t3]], np.float32)
@@ -80,7 +82,6 @@ def main():
     viewer.add_object(o)
 
     #Add some buttons
-    T2=1.0
 
     # New Game Button
     m=Mesh()

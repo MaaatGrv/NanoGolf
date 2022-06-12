@@ -106,7 +106,7 @@ class ViewerGL:
             print("Puissance finale", self.power)
             time.sleep(1)
             self.objs[1].transformation.translation -= \
-                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[1].transformation.rotation_euler), pyrr.Vector3([0, self.downlength, 0,]))
+                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[1].transformation.rotation_euler), pyrr.Vector3([self.downlength, 0, 0,]))
             self.downlength = 0.0
             self.shot=0
 
@@ -245,7 +245,7 @@ class ViewerGL:
                 self.power = 100
             if self.length < 5:
                 self.objs[1].transformation.translation += \
-                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[1].transformation.rotation_euler), pyrr.Vector3([0, 0.048, 0,]))
+                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[1].transformation.rotation_euler), pyrr.Vector3([0.048, 0, 0,]))
                 self.downlength+=0.048
 
     def calculate_bar_length(self):

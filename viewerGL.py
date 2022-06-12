@@ -13,8 +13,6 @@ import time
 from multiprocessing import Process, Queue, Pipe
 import math
 import glutils
-from threading import Timer
-
 
 class ViewerGL:
     def __init__(self):
@@ -61,6 +59,7 @@ class ViewerGL:
         self.WinTextAdded = False
         self.start=0
         self.end=0
+        self.coups=0
 
     def run(self,L1,L2):
         self.init_context()
@@ -111,17 +110,18 @@ class ViewerGL:
             self.downlength = 0.0
             self.shot=0
 
+            self.coups+=1
+            self.display_coups()
+
         if key == glfw.KEY_P and action == glfw.PRESS:
             self.power = 0.0
             self.length = 0.0
 
         if key == glfw.KEY_Q and action == glfw.PRESS:
-            for i in range(len(self.objs)):
-                self.delete_object(self.objs[0])
+            self.coups+=1
 
         if key == glfw.KEY_W and action == glfw.PRESS:
-            for i in range(len(self.new_scene)):
-                self.add_object(self.new_scene[i])
+            pass
 
     def collision(self,L):
         Xmin=[]
@@ -283,8 +283,22 @@ class ViewerGL:
 
             if self.verif_mouse_pos(A1,B1,C1) == True:
                 self.replay=True
+                self.coups=0
+                self.display_coups()
+                
                 print("Bouton Rejouer")
-                self.go_to_origin()
+
+                self.objs[0].transformation.translation[0]=0.0
+                self.objs[0].transformation.translation[1]=0.4
+                self.objs[0].transformation.translation[2]=-5.0
+                self.objs[0].transformation.rotation_euler[2]= -1.57079633
+                
+                self.objs[1].transformation.translation[0]=0.0
+                self.objs[1].transformation.translation[1]=0.0
+                self.objs[1].transformation.translation[2]=-5.0
+                self.objs[1].transformation.rotation_euler[2]= -1.57079633
+
+                self.update_cam()
                 self.replay=False
             
             if self.verif_mouse_pos(A2,B2,C2) == True:
@@ -341,3 +355,25 @@ class ViewerGL:
         self.objs[1].transformation.rotation_euler[pyrr.euler.index().yaw] += angle
         self.update_cam()
         self.rotation.append(angle)
+    
+    def display_coups(self):
+        n=0
+        programGUI_id = glutils.create_program_from_file('gui.vert', 'gui.frag')
+        vao = Text.initalize_geometry()
+        texture = glutils.load_texture('fontB.jpg')
+        o = Text('Coups:' + str(self.coups), np.array([-0.3, -0.98], np.float32), np.array([0.3, -0.7], np.float32), vao, 2, programGUI_id, texture)
+
+        if self.coups == 0 and self.replay == True:
+            self.delete_object(self.objs[-1])
+
+        if self.coups > 0:
+            if self.WinTextAdded == False :
+                if self.coups > 1:
+                    self.delete_object(self.objs[-1])
+                self.add_object(o)
+            else :
+                while self.WinTextAdded == True :
+                    n+=1
+                if self.coups > 1:
+                    self.delete_object(self.objs[-1])
+                self.add_object(o)

@@ -60,6 +60,8 @@ class ViewerGL:
         self.start=0
         self.end=0
         self.coups=0
+        self.shooting=False
+        self.gravity=False
 
     def run(self,L1,L2):
         self.init_context()
@@ -72,6 +74,7 @@ class ViewerGL:
             self.verif_collision()
             self.trajectory()
             self.toucher_drapeau(L1,L2)
+            self.gravity_fall()
 
             # Gestion du timer pour le Win Text
             if self.WinTextAdded == True :
@@ -79,7 +82,6 @@ class ViewerGL:
                     self.start = time.time()
                 self.end = time.time()
                 if self.start != 0 :
-                    print('wait')
                     if self.end-self.start > 3 :
                         self.delete_object(self.objs[-1])
                         self.WinTextAdded = False
@@ -109,13 +111,14 @@ class ViewerGL:
                 pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[1].transformation.rotation_euler), pyrr.Vector3([self.downlength, 0, 0,]))
             self.downlength = 0.0
             self.shot=0
-
+            self.shooting=True
             self.coups+=1
             self.display_coups()
 
         if key == glfw.KEY_P and action == glfw.PRESS:
             self.power = 0.0
             self.length = 0.0
+            self.shooting=False
 
         if key == glfw.KEY_Q and action == glfw.PRESS:
             self.coups+=1
@@ -185,24 +188,20 @@ class ViewerGL:
             print("Pas de variable uniforme : projection")
         GL.glUniformMatrix4fv(loc, 1, GL.GL_FALSE, self.cam.projection)
 
-    def gagner(self, L1, L2):
-        xmin=[]
-        xmax=[]
-        zmin=[]
-        zmax=[]
+
+    def toucher_drapeau(self, L1, L2):
+        xmin,xmax,zmin,zmax = [],[],[],[]
         xmin.append(L1[0][0])
         xmax.append(L2[1][0])
         zmax.append(L1[1][2])
         zmin.append(L2[0][2])
-        return(xmin,xmax,zmin,zmax)
-
-    def toucher_drapeau(self, L1, L2):
-        n=0
-        xmin,xmax,zmin,zmax=self.gagner(L1,L2)
         if len(self.objs) > 0:
             if self.objs[0].transformation.translation[0]>xmin[0] and self.objs[0].transformation.translation[0]<xmax[0] and self.objs[0].transformation.translation[2]>zmin[0] and self.objs[0].transformation.translation[2]<zmax[0] and self.WinTextAdded==False :
                 self.add_object(self.to_add[0])
                 self.WinTextAdded=True
+                self.gravity=True
+            else:
+                self.gravity=False
     
     def update_cam(self):
         #Adaptation de la caméra
@@ -282,24 +281,25 @@ class ViewerGL:
             xpos,ypos=glfw.get_cursor_pos(self.window)
 
             if self.verif_mouse_pos(A1,B1,C1) == True:
-                self.replay=True
-                self.coups=0
-                self.display_coups()
-                
-                print("Bouton Rejouer")
+                if self.coups > 0:
+                    self.replay=True
+                    self.coups=0
+                    self.display_coups()
+                    
+                    print("Bouton Rejouer")
 
-                self.objs[0].transformation.translation[0]=0.0
-                self.objs[0].transformation.translation[1]=0.4
-                self.objs[0].transformation.translation[2]=-5.0
-                self.objs[0].transformation.rotation_euler[2]= -1.57079633
-                
-                self.objs[1].transformation.translation[0]=0.0
-                self.objs[1].transformation.translation[1]=0.0
-                self.objs[1].transformation.translation[2]=-5.0
-                self.objs[1].transformation.rotation_euler[2]= -1.57079633
+                    self.objs[0].transformation.translation[0]=0.0
+                    self.objs[0].transformation.translation[1]=0.4
+                    self.objs[0].transformation.translation[2]=-5.0
+                    self.objs[0].transformation.rotation_euler[2]= -1.57079633
+                    
+                    self.objs[1].transformation.translation[0]=0.0
+                    self.objs[1].transformation.translation[1]=0.0
+                    self.objs[1].transformation.translation[2]=-5.0
+                    self.objs[1].transformation.rotation_euler[2]= -1.57079633
 
-                self.update_cam()
-                self.replay=False
+                    self.update_cam()
+                    self.replay=False
             
             if self.verif_mouse_pos(A2,B2,C2) == True:
                 print('Bouton Quitter')
@@ -330,17 +330,18 @@ class ViewerGL:
 
     # Gestion du mouvement de la balle
     def trajectory(self):
-        self.shot+=0.5
-        if self.shot < self.power:
-            self.t1=time.time()
-            # Variables
-            v0= self.power * 0.8
-            f=30.0
-            m=0.05
-            Tau=m/f
-            tr = Tau*v0*(math.exp((-self.t0)/Tau)-math.exp((-self.t1)/Tau))
-            self.mvmt_translation(tr)
-        self.tO=time.time()
+        if self.shooting:
+            self.shot+=0.5
+            if self.shot < self.power:
+                self.t1=time.time()
+                # Variables
+                v0= self.power * 0.8
+                f=30.0
+                m=0.05
+                Tau=m/f
+                tr = Tau*v0*(math.exp((-self.t0)/Tau)-math.exp((-self.t1)/Tau))
+                self.mvmt_translation(tr)
+            self.tO=time.time()
 
     def mvmt_translation(self,tr):
         self.objs[0].transformation.translation += \
@@ -377,3 +378,12 @@ class ViewerGL:
                 if self.coups > 1:
                     self.delete_object(self.objs[-1])
                 self.add_object(o)
+    
+    def gravity_fall(self):
+        # if self.gravity:
+        #     self.objs[0].transformation.translation[1]=0.0
+        #     self.objs[1].transformation.translation[1]=0.0
+        # else:
+        #     self.objs[0].transformation.translation[1]=0.4
+        #     self.objs[1].transformation.translation[1]=0.4
+        pass

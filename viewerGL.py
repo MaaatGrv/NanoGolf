@@ -86,6 +86,7 @@ class ViewerGL:
                         self.delete_object(self.objs[-1])
                         self.WinTextAdded = False
                         self.start=0
+                        self.replay_game()
 
             for obj in self.objs:
                 GL.glUseProgram(obj.program)
@@ -281,26 +282,9 @@ class ViewerGL:
             xpos,ypos=glfw.get_cursor_pos(self.window)
 
             if self.verif_mouse_pos(A1,B1,C1) == True:
-                if self.coups > 0:
-                    self.replay=True
-                    self.coups=0
-                    self.display_coups()
-                    
-                    print("Bouton Rejouer")
+                print("Bouton Rejouer")
+                self.replay_game()
 
-                    self.objs[0].transformation.translation[0]=0.0
-                    self.objs[0].transformation.translation[1]=0.4
-                    self.objs[0].transformation.translation[2]=-5.0
-                    self.objs[0].transformation.rotation_euler[2]= -1.57079633
-                    
-                    self.objs[1].transformation.translation[0]=0.0
-                    self.objs[1].transformation.translation[1]=0.0
-                    self.objs[1].transformation.translation[2]=-5.0
-                    self.objs[1].transformation.rotation_euler[2]= -1.57079633
-
-                    self.update_cam()
-                    self.replay=False
-            
             if self.verif_mouse_pos(A2,B2,C2) == True:
                 print('Bouton Quitter')
                 glfw.set_window_should_close(window, glfw.TRUE)
@@ -378,6 +362,25 @@ class ViewerGL:
                 if self.coups > 1:
                     self.delete_object(self.objs[-1])
                 self.add_object(o)
+    
+    def replay_game(self):
+        if self.coups > 0:
+            self.replay=True
+            self.coups=0
+            self.display_coups()
+            
+            self.objs[0].transformation.translation[0]=0.0
+            self.objs[0].transformation.translation[1]=0.4
+            self.objs[0].transformation.translation[2]=-5.0
+            self.objs[0].transformation.rotation_euler[2]= -1.57079633
+            
+            self.objs[1].transformation.translation[0]=0.0
+            self.objs[1].transformation.translation[1]=0.0
+            self.objs[1].transformation.translation[2]=-5.0
+            self.objs[1].transformation.rotation_euler[2]= -1.57079633
+
+            self.update_cam()
+            self.replay=False
     
     def gravity_fall(self):
         # if self.gravity:

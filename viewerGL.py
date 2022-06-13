@@ -200,9 +200,10 @@ class ViewerGL:
             if self.objs[0].transformation.translation[0]>xmin[0] and self.objs[0].transformation.translation[0]<xmax[0] and self.objs[0].transformation.translation[2]>zmin[0] and self.objs[0].transformation.translation[2]<zmax[0] and self.WinTextAdded==False :
                 self.add_object(self.to_add[0])
                 self.WinTextAdded=True
-                self.gravity=True
-            else:
-                self.gravity=False
+                self.power=0.0
+                self.objs[0].transformation.translation[1]=0.0
+                self.objs[1].transformation.translation[1]=0.0
+                self.update_cam()
     
     def update_cam(self):
         #Adaptation de la caméra
@@ -314,18 +315,19 @@ class ViewerGL:
 
     # Gestion du mouvement de la balle
     def trajectory(self):
-        if self.shooting:
-            self.shot+=0.5
-            if self.shot < self.power:
-                self.t1=time.time()
-                # Variables
-                v0= self.power * 0.8
-                f=30.0
-                m=0.05
-                Tau=m/f
-                tr = Tau*v0*(math.exp((-self.t0)/Tau)-math.exp((-self.t1)/Tau))
-                self.mvmt_translation(tr)
-            self.tO=time.time()
+        if not self.WinTextAdded:
+            if self.shooting:
+                self.shot+=0.5
+                if self.shot < self.power:
+                    self.t1=time.time()
+                    # Variables
+                    v0= self.power * 0.8
+                    f=30.0
+                    m=0.05
+                    Tau=m/f
+                    tr = Tau*v0*(math.exp((-self.t0)/Tau)-math.exp((-self.t1)/Tau))
+                    self.mvmt_translation(tr)
+                self.tO=time.time()
 
     def mvmt_translation(self,tr):
         self.objs[0].transformation.translation += \
@@ -382,6 +384,7 @@ class ViewerGL:
             self.update_cam()
             self.replay=False
     
+    #Fonction permettant de gérer les déplacement de la balle dans les pentes
     def gravity_fall(self):
         # if self.gravity:
         #     self.objs[0].transformation.translation[1]=0.0

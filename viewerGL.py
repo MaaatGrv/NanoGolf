@@ -69,7 +69,6 @@ class ViewerGL:
             self.verif_collision()
             self.trajectory()
             self.toucher_drapeau(L1,L2)
-            self.gravity_fall()
 
             # Gestion du timer pour le Win Text
             if self.WinTextAdded == True :
@@ -326,9 +325,9 @@ class ViewerGL:
         n=0
 
         # Création de l'objet text
-        programGUI_id = glutils.create_program_from_file('gui.vert', 'gui.frag')
+        programGUI_id = glutils.create_program_from_file('Shaders/gui.vert', 'Shaders/gui.frag')
         vao = Text.initalize_geometry()
-        texture = glutils.load_texture('fontB.jpg')
+        texture = glutils.load_texture('IMG/fontB.jpg')
         o = Text('Coups:' + str(self.coups), np.array([-0.3, -0.98], np.float32), np.array([0.3, -0.7], np.float32), vao, 2, programGUI_id, texture)
 
         if self.coups == 0 and self.replay == True:

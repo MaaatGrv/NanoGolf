@@ -38,30 +38,25 @@ class ViewerGL:
         GL.glClearColor(0.5, 0.6, 0.9, 1.0)
         print(f"NanoGolf: {GL.glGetString(GL.GL_VERSION).decode('ascii')}")
 
+        # initialisation des variables (ça fait beaucoup)
         self.objs = []
         self.new_scene=[]
-        self.touch = {}
-        self.power=0.0
-        self.length=0.0
-        self.downlength=0.0
-        self.menu = 0
-        self.verif=False
-        self.rebond=False
-        self.origin= np.array([ 6 ,  0.4, -5. ])
-        self.shot=0
-        self.t0=0
-        self.t1=0
-        self.translation=[]
-        self.rotation=[]
-        self.replay = False
         self.removed = []
-        self.to_add=[]
-        self.WinTextAdded = False
-        self.start=0
-        self.end=0
-        self.coups=0
-        self.shooting=False
-        self.gravity=False
+        self.to_add=[] # Contient le texte de félicitation qui s'affiche àprès avoir mis la balle dans le trou
+        self.touch = {}
+        self.power=0.0  # Puissance du coup
+        self.length=0.0 # Longueur de la barre de puissance
+        self.shot=0 # Gestion de la puissance
+        self.downlength=0.0 # Longueur de rétraction la barre de puissance
+        self.origin= np.array([ 6 ,  0.4, -5. ]) # Coordonnées  de la balle au spawn
+        self.t0=0 # timer
+        self.t1=0 # timer
+        self.replay = False # Indique que la partie reccommence
+        self.WinTextAdded = False # Variable pour savoir si le texte de fin de partie est affiché
+        self.start=0 # timer
+        self.end=0 # timer
+        self.coups=0 # nombre de coups
+        self.shooting=False # Joueur est en train de tirer ou non
 
     def run(self,L1,L2):
         self.init_context()
@@ -105,42 +100,32 @@ class ViewerGL:
             glfw.set_window_should_close(win, glfw.TRUE)
         self.touch[key] = action
 
+        # Gestion du contrôle de la puissance
+
+        # Il y a un délai de 1s entre le moment où le joueur relache la touche et le moment où la balle part
+        # La barre de puissance rentre ensuite en place
         if key == glfw.KEY_P and action == glfw.RELEASE:
             print("Puissance finale", self.power)
-            time.sleep(1)
+            time.sleep(1) 
             self.objs[1].transformation.translation -= \
                 pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[1].transformation.rotation_euler), pyrr.Vector3([self.downlength, 0, 0,]))
+            
+            # Réinitialisation des variables de puissance
             self.downlength = 0.0
             self.shot=0
             self.shooting=True
+
+            # Un coup est comptabilisé et affiché
             self.coups+=1
             self.display_coups()
 
+        # Certaines variables sont réinitialisées à l'appuie de P pour un nouveau coup
         if key == glfw.KEY_P and action == glfw.PRESS:
             self.power = 0.0
             self.length = 0.0
             self.shooting=False
 
-        if key == glfw.KEY_Q and action == glfw.PRESS:
-            self.coups+=1
-
-        if key == glfw.KEY_W and action == glfw.PRESS:
-            pass
-
-    def collision(self,L):
-        Xmin=[]
-        Xmax=[]
-        Zmin=[]
-        Zmax=[]
-        for i in range(0,len(L)-1):
-            Xmin.append(L[i][2])
-            Xmax.append(L[i+1][2])
-            Zmin.append(L[i][3])
-            Zmax.append(L[i+1][3])
-        return Xmin,Xmax,Zmin,Zmax
-    
-    def send_length(self, length):
-        pass
+    # Gestions de objets présents dans la scène
 
     def add_object(self, obj):
         self.objs.append(obj)
@@ -158,6 +143,7 @@ class ViewerGL:
         self.removed.append(obj)
         self.objs.remove(obj)
 
+    # Gestion des mouvements de la caméra
     def update_camera(self, prog):
         GL.glUseProgram(prog)
         # Récupère l'identifiant de la variable pour le programme courant
@@ -189,7 +175,7 @@ class ViewerGL:
             print("Pas de variable uniforme : projection")
         GL.glUniformMatrix4fv(loc, 1, GL.GL_FALSE, self.cam.projection)
 
-
+    # Permet de détecter si la balle est dans le trou (en réalité zone délimitée autour du drapeau)
     def toucher_drapeau(self, L1, L2):
         xmin,xmax,zmin,zmax = [],[],[],[]
         xmin.append(L1[0][0])
@@ -199,12 +185,15 @@ class ViewerGL:
         if len(self.objs) > 0:
             if self.objs[0].transformation.translation[0]>xmin[0] and self.objs[0].transformation.translation[0]<xmax[0] and self.objs[0].transformation.translation[2]>zmin[0] and self.objs[0].transformation.translation[2]<zmax[0] and self.WinTextAdded==False :
                 self.add_object(self.to_add[0])
+                # Ajout du texte de fin de partie
                 self.WinTextAdded=True
                 self.power=0.0
+                # La balle tombe dans le trou...
                 self.objs[0].transformation.translation[1]=0.0
                 self.objs[1].transformation.translation[1]=0.0
                 self.update_cam()
     
+    # Cette fonction permet à la camera de suivre la balle alors de son appel
     def update_cam(self):
         #Adaptation de la caméra
         self.cam.transformation.rotation_euler = self.objs[0].transformation.rotation_euler.copy() 
@@ -212,6 +201,7 @@ class ViewerGL:
         self.cam.transformation.rotation_center = self.objs[0].transformation.translation + self.objs[0].transformation.rotation_center
         self.cam.transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([0, 1, 5])
 
+    # Gestion des touches du clavier
     def update_key(self):
         if glfw.KEY_UP in self.touch and self.touch[glfw.KEY_UP] > 0:
             self.mvmt_translation(0.02)
@@ -222,22 +212,8 @@ class ViewerGL:
             self.mvmt_rotation(-0.05)
         if glfw.KEY_RIGHT in self.touch and self.touch[glfw.KEY_RIGHT] > 0:
             self.mvmt_rotation(0.05)
-            
-        if glfw.KEY_I in self.touch and self.touch[glfw.KEY_I] > 0:
-            self.cam.transformation.rotation_euler[pyrr.euler.index().roll] -= 0.1
-        if glfw.KEY_K in self.touch and self.touch[glfw.KEY_K] > 0:
-            self.cam.transformation.rotation_euler[pyrr.euler.index().roll] += 0.1
-        if glfw.KEY_J in self.touch and self.touch[glfw.KEY_J] > 0:
-            self.cam.transformation.rotation_euler[pyrr.euler.index().yaw] -= 0.1
-        if glfw.KEY_L in self.touch and self.touch[glfw.KEY_L] > 0:
-            self.cam.transformation.rotation_euler[pyrr.euler.index().yaw] += 0.1
 
-        if glfw.KEY_SPACE in self.touch and self.touch[glfw.KEY_SPACE] > 0:
-            self.cam.transformation.rotation_euler = self.objs[0].transformation.rotation_euler.copy() 
-            self.cam.transformation.rotation_euler[pyrr.euler.index().yaw] += np.pi
-            self.cam.transformation.rotation_center = self.objs[0].transformation.translation + self.objs[0].transformation.rotation_center
-            self.cam.transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([0, 1, 5])
-
+        # Pendant que la touche P est ajoutée, la puissance augmente jusqu'à atteindre 100, sa valeur maximale
         if glfw.KEY_P in self.touch and self.touch[glfw.KEY_P] > 0:
             self.calculate_bar_length()
             if self.power  < 100:
@@ -245,10 +221,12 @@ class ViewerGL:
             else:
                 self.power = 100
             if self.length < 5:
+                # Translation de la barre de puissance pour indiquer la charge de puissance
                 self.objs[1].transformation.translation += \
                 pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[1].transformation.rotation_euler), pyrr.Vector3([0.048, 0, 0,]))
-                self.downlength+=0.048
-
+                self.downlength+=0.048 # Stockage pour pouvoir redescendre a barre une fois le tir lancé.
+    
+    # Calcul la longueur que la barre doit avoir selon la puissance obtenue
     def calculate_bar_length(self):
         lmax = 5
         powermax=100
@@ -271,16 +249,15 @@ class ViewerGL:
         else:
             return False
 
+    # Gestions des 2 boutons Rejouer et Quitter
     def mouse_button_callback(self, window, button, action, mods):
         if button == glfw.MOUSE_BUTTON_LEFT and action == glfw.PRESS:
             # Détection des boutons :
 
-            #Bouton 1
+            # Positions points Bouton 1
             A1,B1,C1=[11,11],[120,11],[120,58]
-            #Bouton 2
+            # Positions points Bouton 2
             A2,B2,C2=[11,75],[120,75],[120,120]
-
-            xpos,ypos=glfw.get_cursor_pos(self.window)
 
             if self.verif_mouse_pos(A1,B1,C1) == True:
                 print("Bouton Rejouer")
@@ -300,20 +277,21 @@ class ViewerGL:
                     dist2= np.linalg.norm(H-self.origin)
                     angle=np.arccos(dist2/dist1)
                     self.mvmt_rotation(-angle)
-
                 if self.objs[0].transformation.translation[0] <= -1.25192378:
                     self.mvmt_rotation(0.5)
                 if self.objs[0].transformation.translation[0] >= 13.22652818:
                     self.mvmt_translation(-0.5)
     
-    def go_to_origin(self):
+    # Fonction permettant changer de niveau en supprimant et ajoutant des éléments à la scène
+    def delete_and_replace_scene(self):
         for i in range(len(self.objs)):
             self.delete_object(self.objs[0])
         for i in range(len(self.new_scene)):
             self.add_object(self.new_scene[i])
-            print('add')
 
     # Gestion du mouvement de la balle
+    # Nous avons essayé de donner à la balle un mouvement assez réaliste
+    # Nous avons donc régler les paramètres de l'équation de mouvement de la balle pour avoir le meilleur résultat
     def trajectory(self):
         if not self.WinTextAdded:
             if self.shooting:
@@ -321,30 +299,33 @@ class ViewerGL:
                 if self.shot < self.power:
                     self.t1=time.time()
                     # Variables
-                    v0= self.power * 0.8
-                    f=30.0
-                    m=0.05
+                    v0= self.power * 0.8 # Vitesse initiale dépend de la puissance
+                    f=30.0 # force de frottement
+                    m=0.05 # masse de la balle de golf en kg
                     Tau=m/f
                     tr = Tau*v0*(math.exp((-self.t0)/Tau)-math.exp((-self.t1)/Tau))
                     self.mvmt_translation(tr)
                 self.tO=time.time()
 
+    # Permet la translation de la balle avec les éléments graphiques et la caméra qui suivent
     def mvmt_translation(self,tr):
         self.objs[0].transformation.translation += \
             pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, tr]))
         self.objs[1].transformation.translation += \
             pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[1].transformation.rotation_euler), pyrr.Vector3([0, 0, tr]))
         self.update_cam()
-        self.translation.append(tr)
     
+    # Permet la rotation de la balle avec les éléments graphiques et la caméra qui suivent
     def mvmt_rotation(self,angle):
         self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] += angle
         self.objs[1].transformation.rotation_euler[pyrr.euler.index().yaw] += angle
         self.update_cam()
-        self.rotation.append(angle)
     
+    # Gestion de l'affichage des coups, le score doit être actualisé après chaque coups.
     def display_coups(self):
         n=0
+
+        # Création de l'objet text
         programGUI_id = glutils.create_program_from_file('gui.vert', 'gui.frag')
         vao = Text.initalize_geometry()
         texture = glutils.load_texture('fontB.jpg')
@@ -365,10 +346,11 @@ class ViewerGL:
                     self.delete_object(self.objs[-1])
                 self.add_object(o)
     
+    # Permet de replacer la balle dans les conditions d'origine avec la camera et les éléments graphiques
     def replay_game(self):
         if self.coups > 0:
             self.replay=True
-            self.coups=0
+            self.coups=0 # Remise à 0 du nombre de coups (logique on retente sa chance)
             self.display_coups()
             
             self.objs[0].transformation.translation[0]=0.0
@@ -383,13 +365,3 @@ class ViewerGL:
 
             self.update_cam()
             self.replay=False
-    
-    #Fonction permettant de gérer les déplacement de la balle dans les pentes
-    def gravity_fall(self):
-        # if self.gravity:
-        #     self.objs[0].transformation.translation[1]=0.0
-        #     self.objs[1].transformation.translation[1]=0.0
-        # else:
-        #     self.objs[0].transformation.translation[1]=0.4
-        #     self.objs[1].transformation.translation[1]=0.4
-        pass

@@ -104,10 +104,10 @@ class ViewerGL:
 
     def update_key(self):
         if glfw.KEY_UP in self.touch and self.touch[glfw.KEY_UP] > 0:
-            self.verif=True
-            # self.objs[0].transformation.translation += \
-            #    pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, 0.2]))   
-            # print(self.objs[0].transformation.translation)   
+            # self.verif=True
+            self.objs[0].transformation.translation += \
+               pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, 0.2]))   
+            print(self.objs[0].transformation.translation)   
         if glfw.KEY_DOWN in self.touch and self.touch[glfw.KEY_DOWN] > 0:
             self.objs[0].transformation.translation -= \
                 pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, 0.02]))

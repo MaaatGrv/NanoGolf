@@ -40,7 +40,7 @@ class ViewerGL:
             GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
 
             self.update_key()
-            self.verif_collision()
+            # self.verif_collision()
             self.trajectory(5)
 
             for obj in self.objs:

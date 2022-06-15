@@ -29,7 +29,7 @@ def main():
     tr.translation.y = 0.4
     tr.translation.z = -5
     tr.rotation_center.z = 0.2
-    texture = glutils.load_texture('ball_red.png')
+    texture = glutils.load_texture('lavaball.jpg')
     o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
     viewer.add_object(o)
 
@@ -61,7 +61,7 @@ def main():
         texture = glutils.load_texture('bois.png')
         o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
         viewer.add_object(o)
-    for i in range(3):
+    for i in range(6):
         tr = Transformation3D()
         tr.rotation_euler=(0,0,np.pi/2) #rotation de pi/2
         tr.translation.y = 0.2
@@ -71,6 +71,7 @@ def main():
         texture = glutils.load_texture('bois.png')
         o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
         viewer.add_object(o)
+    
 
 
 
@@ -111,20 +112,47 @@ def main():
     texture = glutils.load_texture('bois.png')
     o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
     viewer.add_object(o)
+    
 
-    # # m = Mesh.load_obj('flag.obj')
-    # # m.normalize()
-    # # m.apply_matrix(pyrr.matrix44.create_from_scale([2, 2, 2, 1])) #changer la taille de la sphere
-    # # tr = Transformation3D()
-    # # tr.translation.x = 12
-    # # tr.translation.y = 2
+    m = Mesh.load_obj('tunnel_double.obj')
+    m.normalize()
+    m.apply_matrix(pyrr.matrix44.create_from_scale([2, 2, 2, 1])) 
+    tr = Transformation3D()
+    tr.rotation_euler=(0,0,-np.pi/2) #rotation de pi/2
+    tr.translation.y = 0.5
+    tr.translation.z = 29
+    tr.rotation_center.z = 0.2
+    tr.translation.x = 12.2
+    texture = glutils.load_texture('bois.png')
+    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
+    viewer.add_object(o)
+    
+    
+    m = Mesh.load_obj('hole_open.obj')
+    m.normalize()
+    m.apply_matrix(pyrr.matrix44.create_from_scale([2, 2, 2, 1])) 
+    tr = Transformation3D()
+    tr.rotation_euler=(0,0,-np.pi/2) #rotation de pi/2
+    tr.translation.y = 0.1
+    tr.translation.z = 29
+    tr.rotation_center.z = 0.2
+    tr.translation.x = -15
+    texture = glutils.load_texture('bois.png')
+    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
+    viewer.add_object(o)
+    
 
-
-    # tr.translation.z = -4.3
-    # tr.rotation_center.z = -2
-    # texture = glutils.load_texture('flag_blue.png')
-    # o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
-    # viewer.add_object(o)
+    m = Mesh.load_obj('flag.obj')
+    m.normalize()
+    m.apply_matrix(pyrr.matrix44.create_from_scale([2, 2, 2, 1])) #changer la taille de la sphere
+    tr = Transformation3D()
+    tr.translation.x = -15.3
+    tr.translation.y = 2
+    tr.translation.z = 30
+    tr.rotation_center.z = -2
+    texture = glutils.load_texture('flag_blue.png')
+    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
+    viewer.add_object(o)
     
 
 
@@ -135,7 +163,7 @@ def main():
     t0, t1, t2, t3 = [0, 0], [1, 0], [1, 1], [0, 1]
     m.vertices = np.array([[p0 + n + c + t0], [p1 + n + c + t1], [p2 + n + c + t2], [p3 + n + c + t3]], np.float32)
     m.faces = np.array([[0, 1, 2], [0, 2, 3]], np.uint32)
-    texture = glutils.load_texture('grass.jpg')
+    texture = glutils.load_texture('moon.jpg')
     o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, Transformation3D())
     viewer.add_object(o)
     

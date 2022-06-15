@@ -80,12 +80,11 @@ def main():
     m.normalize()
     m.apply_matrix(pyrr.matrix44.create_from_scale([2, 2, 2, 1])) 
     tr = Transformation3D()
-    tr = Transformation3D()
-    tr.rotation_euler=(0,0,np.pi/2) #rotation de pi/2
+    tr.rotation_euler=(0,0,-np.pi/2) #rotation de pi/2
     tr.translation.y = 0.2
-    tr.translation.z = -1.2+4*i
+    tr.translation.z = 6.78
     tr.rotation_center.z = 0.2
-    tr.translation.x = 11.8
+    tr.translation.x = 12.2
     texture = glutils.load_texture('bois.png')
     o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
     viewer.add_object(o)
@@ -110,7 +109,7 @@ def main():
 
 
     m = Mesh()
-    p0, p1, p2, p3 = [-25, 0, -25], [25, 0, -25], [25, 0, 25], [-25, 0, 25]
+    p0, p1, p2, p3 = [-50, 0, -50], [50, 0, -50], [50, 0, 50], [-50, 0, 50]
     n, c = [0, 1, 0], [1, 1, 1]
     t0, t1, t2, t3 = [0, 0], [1, 0], [1, 1], [0, 1]
     m.vertices = np.array([[p0 + n + c + t0], [p1 + n + c + t1], [p2 + n + c + t2], [p3 + n + c + t3]], np.float32)

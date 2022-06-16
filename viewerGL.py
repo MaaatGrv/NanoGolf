@@ -43,6 +43,7 @@ class ViewerGL:
         self.new_scene=[]
         self.removed = []
         self.to_add=[] # Contient le texte de félicitation qui s'affiche àprès avoir mis la balle dans le trou
+        self.lv_2_component = [] # Contient les composants de la scène de niveau 2
         self.touch = {}
         self.power=0.0  # Puissance du coup
         self.length=0.0 # Longueur de la barre de puissance
@@ -57,6 +58,8 @@ class ViewerGL:
         self.end=0 # timer
         self.coups=0 # nombre de coups
         self.shooting=False # Joueur est en train de tirer ou non
+        self.next_lv=False
+        self.lv_nb=1
 
     def run(self,L1,L2):
         self.init_context()
@@ -202,11 +205,6 @@ class ViewerGL:
 
     # Gestion des touches du clavier
     def update_key(self):
-        if glfw.KEY_UP in self.touch and self.touch[glfw.KEY_UP] > 0:
-            self.mvmt_translation(0.02)
-        if glfw.KEY_DOWN in self.touch and self.touch[glfw.KEY_DOWN] > 0:
-            self.mvmt_translation(-0.02)
-
         if glfw.KEY_LEFT in self.touch and self.touch[glfw.KEY_LEFT] > 0:
             self.mvmt_rotation(-0.05)
         if glfw.KEY_RIGHT in self.touch and self.touch[glfw.KEY_RIGHT] > 0:
@@ -281,13 +279,6 @@ class ViewerGL:
                 if self.objs[0].transformation.translation[0] >= 13.22652818:
                     self.mvmt_translation(-0.5)
     
-    # Fonction permettant changer de niveau en supprimant et ajoutant des éléments à la scène
-    def delete_and_replace_scene(self):
-        for i in range(len(self.objs)):
-            self.delete_object(self.objs[0])
-        for i in range(len(self.new_scene)):
-            self.add_object(self.new_scene[i])
-
     # Gestion du mouvement de la balle
     # Nous avons essayé de donner à la balle un mouvement assez réaliste
     # Nous avons donc régler les paramètres de l'équation de mouvement de la balle pour avoir le meilleur résultat
@@ -364,3 +355,19 @@ class ViewerGL:
 
             self.update_cam()
             self.replay=False
+    
+    def next_level(self):
+        if self.next_lv :
+            self.lv_nb+=1
+            self.delete_and_replace_scene()
+
+    # Fonction permettant changer de niveau en supprimant et ajoutant des éléments à la scène
+    def delete_and_replace_scene(self):
+        for i in range(len(self.objs)):
+            self.delete_object(self.objs[0])
+
+        self.lv_2_component
+
+        for i in range(len(self.new_scene)):
+            self.add_object(self.new_scene[i])
+

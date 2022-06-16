@@ -61,7 +61,7 @@ class ViewerGL:
         self.next_lv=False
         self.lv_nb=1
 
-    def run(self,L1,L2):
+    def run(self,LimTrouList):
         self.init_context()
         # boucle d'affichage
         while not glfw.window_should_close(self.window):
@@ -71,7 +71,7 @@ class ViewerGL:
             self.update_key()
             self.verif_collision()
             self.trajectory()
-            self.toucher_drapeau(L1,L2)
+            self.toucher_drapeau(LimTrouList)
 
             # Gestion du timer pour le Win Text
             if self.WinTextAdded == True :
@@ -83,6 +83,7 @@ class ViewerGL:
                         self.delete_object(self.objs[-1])
                         self.WinTextAdded = False
                         self.start=0
+                        self.next_level()
                         self.replay_game()
 
             for obj in self.objs:
@@ -126,6 +127,9 @@ class ViewerGL:
             self.power = 0.0
             self.length = 0.0
             self.shooting=False
+        
+        if key == glfw.KEY_Q and action == glfw.PRESS:
+            self.next_level()
 
     # Gestions de objets présents dans la scène
 
@@ -134,6 +138,9 @@ class ViewerGL:
         if not self.WinTextAdded :
             if not self.replay :
                 self.new_scene.append(obj)
+    
+    def add_object_LV2(self,obj):
+        self.lv_2_component.append(obj)
     
     def add_future_object(self, obj):
         self.to_add.append(obj)
@@ -178,22 +185,25 @@ class ViewerGL:
         GL.glUniformMatrix4fv(loc, 1, GL.GL_FALSE, self.cam.projection)
 
     # Permet de détecter si la balle est dans le trou (en réalité zone délimitée autour du drapeau)
-    def toucher_drapeau(self, L1, L2):
-        xmin,xmax,zmin,zmax = [],[],[],[]
-        xmin.append(L1[0][0])
-        xmax.append(L2[1][0])
-        zmax.append(L1[1][2])
-        zmin.append(L2[0][2])
-        if len(self.objs) > 0:
-            if self.objs[0].transformation.translation[0]>xmin[0] and self.objs[0].transformation.translation[0]<xmax[0] and self.objs[0].transformation.translation[2]>zmin[0] and self.objs[0].transformation.translation[2]<zmax[0] and self.WinTextAdded==False :
-                self.add_object(self.to_add[0])
-                # Ajout du texte de fin de partie
-                self.WinTextAdded=True
-                self.power=0.0
-                # La balle tombe dans le trou...
-                self.objs[0].transformation.translation[1]=0.0
-                self.objs[1].transformation.translation[1]=0.0
-                self.update_cam()
+    def toucher_drapeau(self, LimTrouList):
+        if self.lv_nb == 1:
+            L1=LimTrouList[self.lv_nb-1][0]
+            L2=LimTrouList[self.lv_nb-1][1]
+            xmin,xmax,zmin,zmax = [],[],[],[]
+            xmin.append(L1[0][0])
+            xmax.append(L2[1][0])
+            zmax.append(L1[1][2])
+            zmin.append(L2[0][2])
+            if len(self.objs) > 0:
+                if self.objs[0].transformation.translation[0]>xmin[0] and self.objs[0].transformation.translation[0]<xmax[0] and self.objs[0].transformation.translation[2]>zmin[0] and self.objs[0].transformation.translation[2]<zmax[0] and self.WinTextAdded==False :
+                    self.add_object(self.to_add[0])
+                    # Ajout du texte de fin de partie
+                    self.WinTextAdded=True
+                    self.power=0.0
+                    # La balle tombe dans le trou...
+                    self.objs[0].transformation.translation[1]=0.0
+                    self.objs[1].transformation.translation[1]=0.0
+                    self.update_cam()
     
     # Cette fonction permet à la camera de suivre la balle alors de son appel
     def update_cam(self):
@@ -266,18 +276,19 @@ class ViewerGL:
 
     # Gestion des collisions
     def verif_collision(self):
-        if not self.replay:
-            if len(self.objs) > 0:
-                if self.objs[0].transformation.translation[2] <=-6.59623226 or self.objs[0].transformation.translation[2] >=-3.87759959:
-                    H=np.array([self.objs[0].transformation.translation[0],self.origin[1],self.origin[2]]) #projeter de l'origine 
-                    dist1 = np.linalg.norm(self.objs[0].transformation.translation-self.origin)
-                    dist2= np.linalg.norm(H-self.origin)
-                    angle=np.arccos(dist2/dist1)
-                    self.mvmt_rotation(-angle)
-                if self.objs[0].transformation.translation[0] <= -1.25192378:
-                    self.mvmt_rotation(0.5)
-                if self.objs[0].transformation.translation[0] >= 13.22652818:
-                    self.mvmt_translation(-0.5)
+        if self.lv_nb == 1:
+            if not self.replay:
+                if len(self.objs) > 0:
+                    if self.objs[0].transformation.translation[2] <=-6.59623226 or self.objs[0].transformation.translation[2] >=-3.87759959:
+                        H=np.array([self.objs[0].transformation.translation[0],self.origin[1],self.origin[2]]) #projeter de l'origine 
+                        dist1 = np.linalg.norm(self.objs[0].transformation.translation-self.origin)
+                        dist2= np.linalg.norm(H-self.origin)
+                        angle=np.arccos(dist2/dist1)
+                        self.mvmt_rotation(-angle)
+                    if self.objs[0].transformation.translation[0] <= -1.25192378:
+                        self.mvmt_rotation(0.5)
+                    if self.objs[0].transformation.translation[0] >= 13.22652818:
+                        self.mvmt_translation(-0.5)
     
     # Gestion du mouvement de la balle
     # Nous avons essayé de donner à la balle un mouvement assez réaliste
@@ -355,19 +366,13 @@ class ViewerGL:
 
             self.update_cam()
             self.replay=False
-    
-    def next_level(self):
-        if self.next_lv :
-            self.lv_nb+=1
-            self.delete_and_replace_scene()
 
     # Fonction permettant changer de niveau en supprimant et ajoutant des éléments à la scène
-    def delete_and_replace_scene(self):
+
+    def next_level(self):
+        self.lv_nb+=1
         for i in range(len(self.objs)):
             self.delete_object(self.objs[0])
 
-        self.lv_2_component
-
-        for i in range(len(self.new_scene)):
-            self.add_object(self.new_scene[i])
-
+        for elmt in eval('self.lv_'+str(self.lv_nb)+'_component'):
+            self.add_object(elmt)

@@ -1,8 +1,10 @@
+from tkinter import Y
 import OpenGL.GL as GL
 import glfw
 import pyrr
 import numpy as np
 from cpe3d import Object3D
+from random import randint
 
 class ViewerGL:
     def __init__(self):
@@ -41,6 +43,7 @@ class ViewerGL:
 
             self.update_key()
             # self.verif_collision()
+
             self.trajectory(5)
 
             for obj in self.objs:
@@ -61,6 +64,36 @@ class ViewerGL:
         self.touch[key] = action
     
 
+    #retourner au debut
+    def ball_spawn(self):
+        self.objs[0].transformation.translation[0]=0.0
+        self.objs[0].transformation.translation[1]=0.4
+        self.objs[0].transformation.translation[2]=-5.0
+        self.objs[0].transformation.rotation_euler[2]= -1.57079633
+        
+        self.objs[1].transformation.translation[0]=0.0
+        self.objs[1].transformation.translation[1]=0.0
+        self.objs[1].transformation.translation[2]=-5.0
+        self.objs[1].transformation.rotation_euler[2]= -1.57079633
+
+    #teleporte la balle sur la plateforme ou se situe le drapeau
+    def goal_flag(self):
+        self.objs[0].transformation.translation[0]=-14.29777672 
+        self.objs[0].transformation.translation[1]=0.4
+        self.objs[0].transformation.translation[2]= 28.27962753
+        self.objs[0].transformation.rotation_euler[2]= -1.57079633
+        
+        
+        
+    #transporte la balle soit au debut soit au niveau du trou de golf
+    def teleportation(self):
+        x=randint(1,50)
+        y=randint(1,50)
+        z=x/y
+        if z<=1:
+            self.ball_spawn()
+        else:
+            self.goal_flag()
 
     def add_object(self, obj):
         self.objs.append(obj)
@@ -147,7 +180,7 @@ class ViewerGL:
             self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] +=0.5
         if self.objs[0].transformation.translation[0] >= 13.22652818:
             self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] -=0.5
-            
+ 
 
     def trajectory(self,a):
         b=0

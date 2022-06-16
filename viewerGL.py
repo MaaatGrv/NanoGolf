@@ -60,6 +60,7 @@ class ViewerGL:
         self.shooting=False # Joueur est en train de tirer ou non
         self.next_lv=False
         self.lv_nb=1
+        self.score=0
 
     def run(self,LimTrouList):
         self.init_context()
@@ -84,7 +85,6 @@ class ViewerGL:
                         self.WinTextAdded = False
                         self.start=0
                         self.next_level()
-                        self.replay_game()
 
             for obj in self.objs:
                 GL.glUseProgram(obj.program)
@@ -244,6 +244,7 @@ class ViewerGL:
     
     # Initialise la position de la balle
     def init_context(self):
+        self.display_niveau()
         self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] -= np.pi/2
         self.objs[1].transformation.rotation_euler[pyrr.euler.index().yaw] -= np.pi/2
         self.update_cam()   
@@ -346,33 +347,55 @@ class ViewerGL:
                 if self.coups > 1:
                     self.delete_object(self.objs[-1])
                 self.add_object(o)
+
+    def display_niveau(self):
+        # Création de l'objet text
+        programGUI_id = glutils.create_program_from_file('Shaders/gui.vert', 'Shaders/gui.frag')
+        vao = Text.initalize_geometry()
+        texture = glutils.load_texture('IMG/fontB.jpg')
+        o = Text('Niveau:' + str(self.lv_nb), np.array([0.3, 0.65], np.float32), np.array([0.98, 0.79], np.float32), vao, 2, programGUI_id, texture)
+        self.add_object(o)
     
+    def display_score(self):
+        programGUI_id = glutils.create_program_from_file('Shaders/gui.vert', 'Shaders/gui.frag')
+        vao = Text.initalize_geometry()
+        texture = glutils.load_texture('IMG/fontB.jpg')
+        o = Text('Score:' + str(self.score), np.array([0.3, 0.5], np.float32), np.array([0.98, 0.64], np.float32), vao, 2, programGUI_id, texture)
+        self.add_object(o)
+
+    
+    def ball_spawn(self):
+        self.objs[0].transformation.translation[0]=0.0
+        self.objs[0].transformation.translation[1]=0.4
+        self.objs[0].transformation.translation[2]=-5.0
+        self.objs[0].transformation.rotation_euler[2]= -1.57079633
+        
+        self.objs[1].transformation.translation[0]=0.0
+        self.objs[1].transformation.translation[1]=0.0
+        self.objs[1].transformation.translation[2]=-5.0
+        self.objs[1].transformation.rotation_euler[2]= -1.57079633
+
+        self.update_cam()
+
     # Permet de replacer la balle dans les conditions d'origine avec la camera et les éléments graphiques
     def replay_game(self):
         if self.coups > 0:
             self.replay=True
             self.coups=0 # Remise à 0 du nombre de coups (logique on retente sa chance)
             self.display_coups()
-            
-            self.objs[0].transformation.translation[0]=0.0
-            self.objs[0].transformation.translation[1]=0.4
-            self.objs[0].transformation.translation[2]=-5.0
-            self.objs[0].transformation.rotation_euler[2]= -1.57079633
-            
-            self.objs[1].transformation.translation[0]=0.0
-            self.objs[1].transformation.translation[1]=0.0
-            self.objs[1].transformation.translation[2]=-5.0
-            self.objs[1].transformation.rotation_euler[2]= -1.57079633
-
-            self.update_cam()
+            self.ball_spawn()
             self.replay=False
 
     # Fonction permettant changer de niveau en supprimant et ajoutant des éléments à la scène
 
     def next_level(self):
+        self.score+=self.coups
+        self.coups=0
         self.lv_nb+=1
         for i in range(len(self.objs)):
             self.delete_object(self.objs[0])
-
         for elmt in eval('self.lv_'+str(self.lv_nb)+'_component'):
             self.add_object(elmt)
+        self.display_niveau()
+        self.display_score()
+        self.ball_spawn()

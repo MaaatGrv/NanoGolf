@@ -195,7 +195,13 @@ class ViewerGL:
 
 
     def zone_collision_1(self):
-        pass
+        H=np.array([x,self.origin[1],self.origin[2]]) #projeter de l'origine 
+        dist1 = np.linalg.norm(self.objs[0].transformation.translation-self.origin)
+        dist2= np.linalg.norm(H-self.origin)
+        angle=np.arccos(dist2/dist1)
+        print("angle",angle)
+        self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] -= angle
+
     
     def zone_collision_2(self):
         pass

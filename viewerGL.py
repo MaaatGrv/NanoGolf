@@ -42,7 +42,7 @@ class ViewerGL:
             GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
 
             self.update_key()
-            self.verif_collision()
+            # self.verif_collision()
 
             self.trajectory(5)
 
@@ -170,15 +170,8 @@ class ViewerGL:
         y=self.objs[0].transformation.translation[1]
         z=self.objs[0].transformation.translation[2]
         #premiére zone de collision 
-        if z<=-6.59623226 or z >=-3.87759959 and x<= 13.22652818:
-            self.rebond=True
-            H=np.array([x,self.origin[1],self.origin[2]]) #projeter de l'origine 
-            dist1 = np.linalg.norm(self.objs[0].transformation.translation-self.origin)
-            dist2= np.linalg.norm(H-self.origin)
-            angle=np.arccos(dist2/dist1)
-            print("angle",angle)
-            self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] -= angle
-
+        if z<= -3.87759959 :
+            pass
         #deuxième zone de collision
         # if x <= -1.25192378:
         #     self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] +=0.5
@@ -195,6 +188,9 @@ class ViewerGL:
 
 
     def zone_collision_1(self):
+        x=self.objs[0].transformation.translation[0]
+        y=self.objs[0].transformation.translation[1]
+        z=self.objs[0].transformation.translation[2]
         H=np.array([x,self.origin[1],self.origin[2]]) #projeter de l'origine 
         dist1 = np.linalg.norm(self.objs[0].transformation.translation-self.origin)
         dist2= np.linalg.norm(H-self.origin)

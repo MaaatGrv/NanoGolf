@@ -87,18 +87,7 @@ def main():
     o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
     viewer.add_object(o)
     
-    m = Mesh.load_obj('splitT.obj')
-    m.normalize()
-    m.apply_matrix(pyrr.matrix44.create_from_scale([2, 2, 2, 1])) 
-    tr = Transformation3D()
-    tr.rotation_euler=(0,0,-np.pi/2) #rotation de pi/2
-    tr.translation.y = 0.2
-    tr.translation.z = 6.78
-    tr.rotation_center.z = 0.2
-    tr.translation.x = 12.2
-    texture = glutils.load_texture('bois.png')
-    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
-    viewer.add_object(o)
+
 
     m = Mesh.load_obj('windwill.obj')
     m.normalize()

@@ -191,6 +191,30 @@ class ViewerGL:
         elif (x>= 13.41981779 and x<= 10.73907768 and z== 9.40632919):
             self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] -=0.5
 
+
+
+
+    def zone_collision_1(self):
+        pass
+    
+    def zone_collision_2(self):
+        pass
+    
+    def zone_collision_3(self):
+        pass
+    
+    def zone_collision_4(self):
+        pass
+    
+    def zone_collision_5(self):
+        pass
+    
+    def zone_collision_6(self):
+        pass
+    
+    def zone_collision_7(self): 
+        pass
+    
     def trajectory(self,a):
         b=0
         if self.verif:

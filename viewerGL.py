@@ -42,7 +42,7 @@ class ViewerGL:
             GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
 
             self.update_key()
-            # self.verif_collision()
+            self.verif_collision()
 
             self.trajectory(5)
 
@@ -137,7 +137,7 @@ class ViewerGL:
 
     def update_key(self):
         if glfw.KEY_UP in self.touch and self.touch[glfw.KEY_UP] > 0:
-            # self.verif=True
+
             self.objs[0].transformation.translation += \
                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, 0.2]))   
             print(self.objs[0].transformation.translation)   
@@ -166,21 +166,30 @@ class ViewerGL:
         self.cam.transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([0, 1, 5])
 
     def verif_collision(self):
-        if self.objs[0].transformation.translation[2] <=-6.59623226 or self.objs[0].transformation.translation[2] >=-3.87759959:
+        x=self.objs[0].transformation.translation[0]
+        y=self.objs[0].transformation.translation[1]
+        z=self.objs[0].transformation.translation[2]
+        #premiére zone de collision 
+        if z<=-6.59623226 or z >=-3.87759959 and x<= 13.22652818:
             self.rebond=True
-            H=np.array([self.objs[0].transformation.translation[0],self.origin[1],self.origin[2]]) #projeter de l'origine 
-            print("origin",self.origin)
-            print("H",H)
+            H=np.array([x,self.origin[1],self.origin[2]]) #projeter de l'origine 
             dist1 = np.linalg.norm(self.objs[0].transformation.translation-self.origin)
             dist2= np.linalg.norm(H-self.origin)
             angle=np.arccos(dist2/dist1)
             print("angle",angle)
             self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] -= angle
-        if self.objs[0].transformation.translation[0] <= -1.25192378:
-            self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] +=0.5
-        if self.objs[0].transformation.translation[0] >= 13.22652818:
+
+        #deuxième zone de collision
+        # if x <= -1.25192378:
+        #     self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] +=0.5
+        # if x>= 13.22652818:
+        #     self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] -=0.5
+
+        #SplitT
+        elif (x>= 13.41981779 and x<= 10.73907768 and z== 8.28156984):
             self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] -=0.5
- 
+        elif (x>= 13.41981779 and x<= 10.73907768 and z== 9.40632919):
+            self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] -=0.5
 
     def trajectory(self,a):
         b=0

@@ -170,7 +170,7 @@ class ViewerGL:
         y=self.objs[0].transformation.translation[1]
         z=self.objs[0].transformation.translation[2]
         #premiére zone de collision 
-        if z<= -3.87759959 :
+        if z<= -3.87759959 : #Faire des exceptions dans le rectangle de collision 
             pass
         #deuxième zone de collision
         # if x <= -1.25192378:

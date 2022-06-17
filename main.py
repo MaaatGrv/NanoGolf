@@ -1,4 +1,5 @@
-from matplotlib.pyplot import axis
+#from matplotlib.pyplot import axis
+from cmath import log10
 from viewerGL import ViewerGL
 import glutils
 from mesh import Mesh
@@ -21,6 +22,7 @@ def main():
     programGUI_id = glutils.create_program_from_file('gui.vert', 'gui.frag')
 
     collision_box=[]
+    LimTrouList_2=[]
 
     m = Mesh.load_obj('ball2.obj')
     m.normalize()
@@ -154,6 +156,24 @@ def main():
     o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
     viewer.add_object(o)
     
+   
+    # Win Text
+    vao = Text.initalize_geometry()
+    texture = glutils.load_texture('fontB.jpg')
+    o = Text('Felicitations',  np.array([-0.5, -0.2], np.float32), np.array([0.5, 0.3], np.float32), vao, 2, programGUI_id, texture)
+    viewer.add_future_object(o)
+
+    minL_1=np.amin(m.vertices,axis=0)[:3]
+    maxL_1=np.amax(m.vertices,axis=0)[:3]
+    L_1=[minL_1, maxL_1]
+    L_2=[0,0,0]
+    L_1[0][0]=L_1[0][0]-15
+    L_1[1][0]=L_1[1][0]-15.5
+    L_1[0][2]=L_1[0][2]+29
+    L_1[1][2]=L_1[1][2]+30
+    Lim_Trou_2=[L_1,L_2]
+    LimTrouList_2.append(Lim_Trou_2)
+    
     
 
 
@@ -171,17 +191,17 @@ def main():
     
     
 
-    vao = Text.initalize_geometry()
-    texture = glutils.load_texture('fontB.jpg')
-    o = Text('Nano ', np.array([-0.8, 0.3], np.float32), np.array([0.8, 0.8], np.float32), vao, 2, programGUI_id, texture)
-    viewer.add_object(o)
+   # vao = Text.initalize_geometry()
+    #texture = glutils.load_texture('fontB.jpg')
+    #o = Text('Nano ', np.array([-0.8, 0.3], np.float32), np.array([0.8, 0.8], np.float32), vao, 2, programGUI_id, texture)
+    #viewer.add_object(o)
 
 
-    o = Text('Golf', np.array([-0.5, -0.2], np.float32), np.array([0.5, 0.3], np.float32), vao, 2, programGUI_id, texture)
-    viewer.add_object(o)
+    #o = Text('Golf', np.array([-0.5, -0.2], np.float32), np.array([0.5, 0.3], np.float32), vao, 2, programGUI_id, texture)
+    #viewer.add_object(o)
 
 
-    viewer.run()
+    viewer.run(LimTrouList_2)
 
 
 if __name__ == '__main__':

@@ -5,6 +5,7 @@ import pyrr
 import numpy as np
 from cpe3d import Object3D
 from random import randint
+import time
 
 class ViewerGL:
     def __init__(self):
@@ -34,17 +35,33 @@ class ViewerGL:
         self.verif=False
         self.rebond=False
         self.origin= np.array([ 6 ,  0.4, -5. ])
+        self.to_add=[] # Contient le texte de félicitation qui s'affiche àprès avoir mis la balle dans le trou
+        self.WinTextAdded = False # Variable pour savoir si le texte de fin de partie est affiché
+        self.lv_nb=1
+        self.start=0 # timer
+        self.end=0 # timer
 
-    def run(self):
+    def run(self, LimTrouList_2):
         # boucle d'affichage
         while not glfw.window_should_close(self.window):
             # nettoyage de la fenêtre : fond et profondeur
             GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
 
             self.update_key()
-            self.verif_collision()
+            #self.verif_collision()
 
             self.trajectory(5)
+            self.toucher_drapeau_2(LimTrouList_2)
+             # Gestion du timer pour le Win Text
+            if self.WinTextAdded == True :
+                if self.start ==0:
+                    self.start = time.time()
+                self.end = time.time()
+                if self.start != 0 :
+                    if self.end-self.start > 3 :
+                        self.delete_object(self.objs[-1])
+                        self.WinTextAdded = False
+                        self.start=0
 
             for obj in self.objs:
                 GL.glUseProgram(obj.program)
@@ -97,6 +114,9 @@ class ViewerGL:
 
     def add_object(self, obj):
         self.objs.append(obj)
+
+    def add_future_object(self, obj):
+        self.to_add.append(obj)
 
     def delete_object(self, obj):
        self.objs.remove(obj)
@@ -191,6 +211,33 @@ class ViewerGL:
         elif (x>= 13.41981779 and x<= 10.73907768 and z== 9.40632919):
             self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] -=0.5
 
+    # Permet de détecter si la balle est dans le trou (en réalité zone délimitée autour du drapeau)
+    def toucher_drapeau_2(self, LimTrouList_2):
+        if self.lv_nb == 1:
+            L1_2=LimTrouList_2[0][0]
+            xmin_2,xmax_2,zmin_2,zmax_2 = [],[],[],[]
+            xmin_2.append(L1_2[1][0])
+            xmax_2.append(L1_2[0][0])
+            zmax_2.append(L1_2[1][2])
+            zmin_2.append(L1_2[0][2])
+            if len(self.objs) > 0:
+               if self.objs[0].transformation.translation[0]>xmin_2[0] and self.objs[0].transformation.translation[0]<xmax_2[0] and self.objs[0].transformation.translation[2]>zmin_2[0] and self.objs[0].transformation.translation[2]<zmax_2[0] and self.WinTextAdded==False :
+                    self.add_object(self.to_add[0])
+                    #Ajout du texte de fin de partie
+                    self.WinTextAdded=True
+                    self.power=0.0
+                    # La balle tombe dans le trou...
+                    self.objs[0].transformation.translation[1]=0.0
+                    self.objs[1].transformation.translation[1]=0.0
+                    self.update_cam()
+
+    # Cette fonction permet à la camera de suivre la balle alors de son appel
+    def update_cam(self):
+        #Adaptation de la caméra
+        self.cam.transformation.rotation_euler = self.objs[0].transformation.rotation_euler.copy() 
+        self.cam.transformation.rotation_euler[pyrr.euler.index().yaw] += np.pi
+        self.cam.transformation.rotation_center = self.objs[0].transformation.translation + self.objs[0].transformation.rotation_center
+        self.cam.transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([0, 1, 5])
 
 
 

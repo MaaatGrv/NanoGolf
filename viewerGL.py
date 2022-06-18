@@ -84,7 +84,10 @@ class ViewerGL:
                         self.delete_object(self.objs[-1])
                         self.WinTextAdded = False
                         self.start=0
-                        self.next_level()
+                        if self.lv_nb < 2:
+                            self.next_level()
+                        else:
+                            self.replay_game()
 
             for obj in self.objs:
                 GL.glUseProgram(obj.program)
@@ -186,7 +189,7 @@ class ViewerGL:
 
     # Permet de détecter si la balle est dans le trou (en réalité zone délimitée autour du drapeau)
     def toucher_drapeau(self, LimTrouList):
-        if self.lv_nb == 1:
+        if self.lv_nb < 3 :
             L1=LimTrouList[self.lv_nb-1][0]
             L2=LimTrouList[self.lv_nb-1][1]
             xmin,xmax,zmin,zmax = [],[],[],[]

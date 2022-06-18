@@ -357,6 +357,23 @@ def main():
     o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
     viewer.add_object_LV2(o)
 
+    minAABB=np.amin(m.vertices,axis=0)[:3]
+    maxAABB=np.amax(m.vertices,axis=0)[:3]
+    AABB=[minAABB, maxAABB]
+    CCDD=[[0,0,0],[0,0,0]]
+    AABB[0][0]=AABB[0][0]-15.5
+    AABB[1][0]=AABB[1][0]-15
+    AABB[0][2]=AABB[0][2]+29
+    AABB[1][2]=AABB[1][2]+30
+
+    CCDD[0][0]=AABB[0][0]
+    CCDD[1][0]=AABB[1][0]+2*(maxaabb[0]-12)
+    CCDD[0][2]=AABB[0][2]+(minaabb[2]+4.3) 
+    CCDD[1][2]=AABB[1][2]
+
+    Lim_Trou=[AABB,CCDD]
+    Lim_trou_list.append(Lim_Trou)
+
     viewer.run(Lim_trou_list)
 
 if __name__ == '__main__':

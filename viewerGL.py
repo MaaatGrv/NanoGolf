@@ -191,12 +191,11 @@ class ViewerGL:
     def toucher_drapeau(self, LimTrouList):
         if self.lv_nb < 3 :
             L1=LimTrouList[self.lv_nb-1][0]
-            L2=LimTrouList[self.lv_nb-1][1]
             xmin,xmax,zmin,zmax = [],[],[],[]
-            xmin.append(L1[0][0])
-            xmax.append(L2[1][0])
+            xmin.append(L1[1][0])
+            xmax.append(L1[0][0])
             zmax.append(L1[1][2])
-            zmin.append(L2[0][2])
+            zmin.append(L1[0][2])
             if len(self.objs) > 0:
                 if self.objs[0].transformation.translation[0]>xmin[0] and self.objs[0].transformation.translation[0]<xmax[0] and self.objs[0].transformation.translation[2]>zmin[0] and self.objs[0].transformation.translation[2]<zmax[0] and self.WinTextAdded==False :
                     self.add_object(self.to_add[0])

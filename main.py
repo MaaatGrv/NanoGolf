@@ -213,14 +213,10 @@ def main():
     maxaabb=np.amax(m.vertices,axis=0)[:3]
     AABB=[minaabb, maxaabb]
     CCDD=[[0,0,0],[0,0,0]]
-    AABB[0][0]=AABB[0][0]+12
-    AABB[1][0]=AABB[1][0]+12
-    AABB[0][2]=AABB[0][2]-4.3
-    AABB[1][2]=AABB[1][2]-4.3
-    CCDD[0][0]=AABB[0][0]
-    CCDD[1][0]=AABB[1][0]+2*(maxaabb[0]-12)
-    CCDD[0][2]=AABB[0][2]+(minaabb[2]+4.3) 
-    CCDD[1][2]=AABB[1][2]
+    AABB[0][0]=AABB[0][0]+12.1
+    AABB[1][0]=AABB[1][0]+11.9
+    AABB[0][2]=AABB[0][2]-4.4
+    AABB[1][2]=AABB[1][2]-4.2
 
     Lim_Trou=[AABB,CCDD]
     Lim_trou_list.append(Lim_Trou)
@@ -361,15 +357,10 @@ def main():
     maxAABB=np.amax(m.vertices,axis=0)[:3]
     AABB=[minAABB, maxAABB]
     CCDD=[[0,0,0],[0,0,0]]
-    AABB[0][0]=AABB[0][0]-15.5
-    AABB[1][0]=AABB[1][0]-15
+    AABB[0][0]=AABB[0][0]-15
+    AABB[1][0]=AABB[1][0]-15.5
     AABB[0][2]=AABB[0][2]+29
     AABB[1][2]=AABB[1][2]+30
-
-    CCDD[0][0]=AABB[0][0]
-    CCDD[1][0]=AABB[1][0]+2*(maxaabb[0]-12)
-    CCDD[0][2]=AABB[0][2]+(minaabb[2]+4.3) 
-    CCDD[1][2]=AABB[1][2]
 
     Lim_Trou=[AABB,CCDD]
     Lim_trou_list.append(Lim_Trou)

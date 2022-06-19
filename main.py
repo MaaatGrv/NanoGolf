@@ -164,17 +164,13 @@ def main():
     m.normalize()
     m.apply_matrix(pyrr.matrix44.create_from_scale([2, 2, 2, 1])) #changer la taille de la sphere
 
-    collision_box=[]
+
     for i in range(3):
         tr = Transformation3D()
         tr.translation.y = 0.2
         tr.translation.z = -5
         tr.rotation_center.z = 0.2
         tr.translation.x = 4*i
-        wmin=np.amin(m.vertices,axis=0)[:3]
-        wmax=np.amax(m.vertices,axis=0)[:3]
-        collision_box.append([wmin[0],wmin[2],wmin[0]+4*i,wmin[2]-5]) #recuperer les valeurs min  de notre objet
-        collision_box.append([wmax[0],wmax[2],wmax[0]+4*i,wmax[2]-5]) #recuperer les valeurs max  de notre objet
         texture = glutils.load_texture('IMG/bois.png')
         o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
         viewer.add_object(o)
@@ -249,10 +245,6 @@ def main():
         tr.translation.z = -5
         tr.rotation_center.z = 0.2
         tr.translation.x = 4*i
-        wmin=np.amin(m.vertices,axis=0)[:3]
-        wmax=np.amax(m.vertices,axis=0)[:3]
-        collision_box.append([wmin[0],wmin[2],wmin[0]+4*i,wmin[2]-5]) #recuperer les valeurs min  de notre objet
-        collision_box.append([wmax[0],wmax[2],wmax[0]+4*i,wmax[2]-5]) #recuperer les valeurs max  de notre objet
         texture = glutils.load_texture('IMG/bois.png')
         o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
         viewer.add_object_LV2(o)
@@ -277,7 +269,7 @@ def main():
         o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
         viewer.add_object_LV2(o)
     
-    m = Mesh.load_obj('OBJ/roundcorner.obj')
+    m = Mesh.load_obj('OBJ/corner.obj')
     m.normalize()
     m.apply_matrix(pyrr.matrix44.create_from_scale([2, 2, 2, 1])) 
     tr = Transformation3D()
@@ -289,18 +281,6 @@ def main():
     o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
     viewer.add_object_LV2(o)
     
-    m = Mesh.load_obj('OBJ/splitT.obj')
-    m.normalize()
-    m.apply_matrix(pyrr.matrix44.create_from_scale([2, 2, 2, 1])) 
-    tr = Transformation3D()
-    tr.rotation_euler=(0,0,-np.pi/2) #rotation de pi/2
-    tr.translation.y = 0.2
-    tr.translation.z = 6.78
-    tr.rotation_center.z = 0.2
-    tr.translation.x = 12.2
-    texture = glutils.load_texture('IMG/bois.png')
-    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
-    viewer.add_object_LV2(o)
 
     m = Mesh.load_obj('OBJ/windwill.obj')
     m.normalize()

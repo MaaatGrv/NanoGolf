@@ -13,6 +13,7 @@ import time
 from multiprocessing import Process, Queue, Pipe
 import math
 import glutils
+from random import randint
 
 class ViewerGL:
     def __init__(self):
@@ -61,6 +62,7 @@ class ViewerGL:
         self.next_lv=False
         self.lv_nb=1
         self.score=0
+        self.flag=False #pour savoir si on est sur le terrain principal ou pas
 
     def run(self,LimTrouList):
         self.init_context()
@@ -279,20 +281,84 @@ class ViewerGL:
 
     # Gestion des collisions
     def verif_collision(self):
+        x=self.objs[0].transformation.translation[0]
+        z=self.objs[0].transformation.translation[2]
+        
         if self.lv_nb == 1:
             if not self.replay:
                 if len(self.objs) > 0:
-                    if self.objs[0].transformation.translation[2] <=-6.59623226 or self.objs[0].transformation.translation[2] >=-3.87759959:
-                        H=np.array([self.objs[0].transformation.translation[0],self.origin[1],self.origin[2]]) #projeter de l'origine 
+                    if z <=-6.59623226 or z >=-3.87759959:
+                        H=np.array([x,self.origin[1],self.origin[2]]) #projeté de l'origine 
                         dist1 = np.linalg.norm(self.objs[0].transformation.translation-self.origin)
                         dist2= np.linalg.norm(H-self.origin)
                         angle=np.arccos(dist2/dist1)
                         self.mvmt_rotation(-angle)
-                    if self.objs[0].transformation.translation[0] <= -1.25192378:
+                    if x <= -1.25192378:
                         self.mvmt_rotation(0.5)
-                    if self.objs[0].transformation.translation[0] >= 13.22652818:
+                    if x >= 13.22652818:
                         self.mvmt_translation(-0.5)
-    
+        elif self.lv_nb == 2:
+            if not self.replay:
+                if not self.flag: #on est sur le terrain principal
+                    if x < 10.48885479 : #premiere zone de collision
+                        if z<= -6.59623226 or z>=-3.87759959 or x<=-1.25192378:
+                            H=np.array([x,self.origin[1],self.origin[2]]) #projeté de l'origine 
+                            dist1 = np.linalg.norm(self.objs[0].transformation.translation-self.origin)
+                            dist2= np.linalg.norm(H-self.origin)
+                            angle=np.arccos(dist2/dist1)
+                            self.mvmt_rotation(-angle)
+                            
+                    elif x > 10.48885479 and z< -3.87759959: #deuxieme zone de collision
+                        if z<= -6.59623226 or x>=13.42001983:
+                            self.mvmt_rotation(0.5)
+                            
+                    elif z > -3.87759959 and z< 14.87915354: #troisieme zone de collision
+                        if x<= 10.48885479 or x>=13.42001983:
+                            H=np.array([x,self.origin[1],self.origin[2]]) 
+                            dist1 = np.linalg.norm(self.objs[0].transformation.translation-self.origin)
+                            dist2= np.linalg.norm(H-self.origin)
+                            angle=np.arccos(dist2/dist1)
+                            self.mvmt_rotation(-angle)
+                            
+                    elif z > 14.87915354 and z<18.39127109: #quatrieme zone de collision (Moulin)
+                        if z<=15.32027702 and x<=11.67279503 or z>=15.05996786 and x>=12.2932566 :
+                            H=np.array([x,self.origin[1],self.origin[2]]) 
+                            dist1 = np.linalg.norm(self.objs[0].transformation.translation-self.origin)
+                            dist2= np.linalg.norm(H-self.origin)
+                            angle=np.arccos(dist2/dist1)
+                            self.mvmt_rotation(-angle)
+                            
+                    elif z > 18.39127109 and z<27.20517365: #cinquieme zone de collision (entre l'arriere du moulin et le tunnel à 2 entrées)
+                        if x<= 10.48885479 or x>=13.42001983:
+                            H=np.array([x,self.origin[1],self.origin[2]]) 
+                            dist1 = np.linalg.norm(self.objs[0].transformation.translation-self.origin)
+                            dist2= np.linalg.norm(H-self.origin)
+                            angle=np.arccos(dist2/dist1)
+                            self.mvmt_rotation(-angle)
+                            
+                    elif z >= 27.20517365 and z<30.69859009: #sixieme zone de collision (tunnel à 2 entrées)
+                        if x<=12.51696171 and z<=27.07479128 or x>=13.12437002 and z>= 27.26509824: #entree gauche
+                            H=np.array([x,self.origin[1],self.origin[2]]) 
+                            dist1 = np.linalg.norm(self.objs[0].transformation.translation-self.origin)
+                            dist2= np.linalg.norm(H-self.origin)
+                            angle=np.arccos(dist2/dist1)
+                            self.mvmt_rotation(-angle)
+                            
+                        elif x>=11.56392101 and z>=27.57170924 or x<=10.70062192 and z<=27.39683154: #entree droite
+                            H=np.array([x,self.origin[1],self.origin[2]]) 
+                            dist1 = np.linalg.norm(self.objs[0].transformation.translation-self.origin)
+                            dist2= np.linalg.norm(H-self.origin)
+                            angle=np.arccos(dist2/dist1)
+                            self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] += angle
+                            
+                    elif z >= 30.69859009: #sortie du tunnel
+                        self.teleportation()
+                        
+                else: #on est sur le terrain avec le drapeau
+                    if x<= -16.96154505 or x>=-13.43410631  or z<=  27.11692712 or z>=30.69859009:
+                        self.ball_spawn()
+        
+        
     # Gestion du mouvement de la balle
     # Nous avons essayé de donner à la balle un mouvement assez réaliste
     # Nous avons donc régler les paramètres de l'équation de mouvement de la balle pour avoir le meilleur résultat
@@ -401,3 +467,21 @@ class ViewerGL:
         self.display_niveau()
         self.display_score()
         self.ball_spawn()
+    
+    #teleporte la balle sur la plateforme ou se situe le drapeau
+    def goal_flag(self):
+        self.objs[0].transformation.translation[0]=-14.29777672 
+        self.objs[0].transformation.translation[1]=0.4
+        self.objs[0].transformation.translation[2]= 28.27962753
+        self.objs[0].transformation.rotation_euler[2]= -1.57079633
+        
+    #transporte la balle soit au debut soit au niveau du trou de golf
+    def teleportation(self):
+        x=randint(1,50)
+        y=randint(1,50)
+        z=x/y
+        if z<=1:
+            self.ball_spawn()
+        else:
+            self.goal_flag()
+            self.flag=True

@@ -248,7 +248,7 @@ def main():
         texture = glutils.load_texture('IMG/bois.png')
         o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
         viewer.add_object_LV2(o)
-    for i in range(2):
+    for i in range(3):
         tr = Transformation3D()
         tr.rotation_euler=(0,0,np.pi/2) #rotation de pi/2
         tr.translation.y = 0.2

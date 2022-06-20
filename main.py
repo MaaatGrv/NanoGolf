@@ -162,7 +162,7 @@ def main():
 
     m = Mesh.load_obj('OBJ/wall.obj')
     m.normalize()
-    m.apply_matrix(pyrr.matrix44.create_from_scale([2, 2, 2, 1])) #changer la taille de la sphere
+    m.apply_matrix(pyrr.matrix44.create_from_scale([2, 2, 2, 1])) 
 
 
     for i in range(3):
@@ -177,7 +177,7 @@ def main():
     
     m = Mesh.load_obj('OBJ/hole_square.obj')
     m.normalize()
-    m.apply_matrix(pyrr.matrix44.create_from_scale([2, 2, 2, 1])) #changer la taille de la sphere
+    m.apply_matrix(pyrr.matrix44.create_from_scale([2, 2, 2, 1])) 
     tr = Transformation3D()
     tr.translation.x = 12
     tr.translation.y = 0.2
@@ -189,7 +189,7 @@ def main():
     
     m = Mesh.load_obj('OBJ/flag.obj')
     m.normalize()
-    m.apply_matrix(pyrr.matrix44.create_from_scale([2, 2, 2, 1])) #changer la taille de la sphere
+    m.apply_matrix(pyrr.matrix44.create_from_scale([2, 2, 2, 1])) 
     tr = Transformation3D()
     tr.translation.x = 12
     tr.translation.y = 2
@@ -323,7 +323,7 @@ def main():
     
     m = Mesh.load_obj('OBJ/flag.obj')
     m.normalize()
-    m.apply_matrix(pyrr.matrix44.create_from_scale([2, 2, 2, 1])) #changer la taille de la sphere
+    m.apply_matrix(pyrr.matrix44.create_from_scale([2, 2, 2, 1])) 
     tr = Transformation3D()
     tr.translation.x = -15.3
     tr.translation.y = 2

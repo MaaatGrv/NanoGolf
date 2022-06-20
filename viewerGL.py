@@ -290,7 +290,7 @@ class ViewerGL:
                     if z <=-6.59623226 or z >=-3.87759959:
                         H=np.array([x,self.origin[1],self.origin[2]]) #projeté de l'origine 
                         dist1 = np.linalg.norm(self.objs[0].transformation.translation-self.origin)
-                        dist2= np.linalg.norm(H-self.origin)
+                        dist2= np.linalg.norm(self.objs[0].transformation.translation-H)
                         angle=np.arccos(dist2/dist1)
                         self.mvmt_rotation(-angle)
                     if x <= -1.25192378:
@@ -304,7 +304,7 @@ class ViewerGL:
                         if z<= -6.59623226 or z>=-3.87759959 or x<=-1.25192378:
                             H=np.array([x,self.origin[1],self.origin[2]]) #projeté de l'origine 
                             dist1 = np.linalg.norm(self.objs[0].transformation.translation-self.origin)
-                            dist2= np.linalg.norm(H-self.origin)
+                            dist2= np.linalg.norm(self.objs[0].transformation.translation-H)
                             angle=np.arccos(dist2/dist1)
                             self.mvmt_rotation(-angle)
                             
@@ -316,7 +316,7 @@ class ViewerGL:
                         if x<= 10.48885479 or x>=13.42001983:
                             H=np.array([x,self.origin[1],self.origin[2]]) 
                             dist1 = np.linalg.norm(self.objs[0].transformation.translation-self.origin)
-                            dist2= np.linalg.norm(H-self.origin)
+                            dist2= np.linalg.norm(self.objs[0].transformation.translation-H)
                             angle=np.arccos(dist2/dist1)
                             self.mvmt_rotation(-angle)
                             
@@ -324,7 +324,7 @@ class ViewerGL:
                         if z<=15.32027702 and x<=11.67279503 or z>=15.05996786 and x>=12.2932566 :
                             H=np.array([x,self.origin[1],self.origin[2]]) 
                             dist1 = np.linalg.norm(self.objs[0].transformation.translation-self.origin)
-                            dist2= np.linalg.norm(H-self.origin)
+                            dist2= np.linalg.norm(self.objs[0].transformation.translation-H)
                             angle=np.arccos(dist2/dist1)
                             self.mvmt_rotation(-angle)
                             
@@ -332,7 +332,7 @@ class ViewerGL:
                         if x<= 10.48885479 or x>=13.42001983:
                             H=np.array([x,self.origin[1],self.origin[2]]) 
                             dist1 = np.linalg.norm(self.objs[0].transformation.translation-self.origin)
-                            dist2= np.linalg.norm(H-self.origin)
+                            dist2= np.linalg.norm(self.objs[0].transformation.translation-H)
                             angle=np.arccos(dist2/dist1)
                             self.mvmt_rotation(-angle)
                             
@@ -340,14 +340,14 @@ class ViewerGL:
                         if x<=12.31696171 and z<=27.27479128 or x>=13.22437002 and z>= 27.46509824: #entree gauche
                             H=np.array([x,self.origin[1],self.origin[2]]) 
                             dist1 = np.linalg.norm(self.objs[0].transformation.translation-self.origin)
-                            dist2= np.linalg.norm(H-self.origin)
+                            dist2= np.linalg.norm(self.objs[0].transformation.translation-H)
                             angle=np.arccos(dist2/dist1)
                             self.mvmt_rotation(-angle)
                             
                         elif x>=11.56392101 and z>=27.57170924 or x<=10.70062192 and z<=27.39683154: #entree droite
                             H=np.array([x,self.origin[1],self.origin[2]]) 
                             dist1 = np.linalg.norm(self.objs[0].transformation.translation-self.origin)
-                            dist2= np.linalg.norm(H-self.origin)
+                            dist2= np.linalg.norm(self.objs[0].transformation.translation-H)
                             angle=np.arccos(dist2/dist1)
                             self.mvmt_rotation(-angle)
                             

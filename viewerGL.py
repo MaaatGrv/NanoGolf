@@ -291,7 +291,7 @@ class ViewerGL:
                         H=np.array([x,self.origin[1],self.origin[2]]) #projeté de l'origine 
                         dist1 = np.linalg.norm(self.objs[0].transformation.translation-self.origin)
                         dist2= np.linalg.norm(H-self.origin)
-                        angle=np.arccos(dist2/dist1)
+                        angle=np.arcsin(dist2/dist1)
                         self.mvmt_rotation(-angle)
                     if x <= -1.25192378:
                         self.mvmt_rotation(0.5)
@@ -305,7 +305,7 @@ class ViewerGL:
                             H=np.array([x,self.origin[1],self.origin[2]]) #projeté de l'origine 
                             dist1 = np.linalg.norm(self.objs[0].transformation.translation-self.origin)
                             dist2= np.linalg.norm(H-self.origin)
-                            angle=np.arccos(dist2/dist1)
+                            angle=np.arcsin(dist2/dist1)
                             self.mvmt_rotation(-angle)
                             
                     elif x > 10.48885479 and z< -3.87759959: #deuxieme zone de collision
@@ -317,7 +317,7 @@ class ViewerGL:
                             H=np.array([x,self.origin[1],self.origin[2]]) 
                             dist1 = np.linalg.norm(self.objs[0].transformation.translation-self.origin)
                             dist2= np.linalg.norm(H-self.origin)
-                            angle=np.arccos(dist2/dist1)
+                            angle=np.arcsin(dist2/dist1)
                             self.mvmt_rotation(-angle)
                             
                     elif z > 14.87915354 and z<18.39127109: #quatrieme zone de collision (Moulin)
@@ -325,7 +325,7 @@ class ViewerGL:
                             H=np.array([x,self.origin[1],self.origin[2]]) 
                             dist1 = np.linalg.norm(self.objs[0].transformation.translation-self.origin)
                             dist2= np.linalg.norm(H-self.origin)
-                            angle=np.arccos(dist2/dist1)
+                            angle=np.arcsin(dist2/dist1)
                             self.mvmt_rotation(-angle)
                             
                     elif z > 18.39127109 and z<27.20517365: #cinquieme zone de collision (entre l'arriere du moulin et le tunnel à 2 entrées)
@@ -333,7 +333,7 @@ class ViewerGL:
                             H=np.array([x,self.origin[1],self.origin[2]]) 
                             dist1 = np.linalg.norm(self.objs[0].transformation.translation-self.origin)
                             dist2= np.linalg.norm(H-self.origin)
-                            angle=np.arccos(dist2/dist1)
+                            angle=np.arcsin(dist2/dist1)
                             self.mvmt_rotation(-angle)
                             
                     elif z >= 27.20517365 and z<30.69859009: #sixieme zone de collision (tunnel à 2 entrées)
@@ -341,14 +341,14 @@ class ViewerGL:
                             H=np.array([x,self.origin[1],self.origin[2]]) 
                             dist1 = np.linalg.norm(self.objs[0].transformation.translation-self.origin)
                             dist2= np.linalg.norm(H-self.origin)
-                            angle=np.arccos(dist2/dist1)
+                            angle=np.arcsin(dist2/dist1)
                             self.mvmt_rotation(-angle)
                             
                         elif x>=11.56392101 and z>=27.57170924 or x<=10.70062192 and z<=27.39683154: #entree droite
                             H=np.array([x,self.origin[1],self.origin[2]]) 
                             dist1 = np.linalg.norm(self.objs[0].transformation.translation-self.origin)
                             dist2= np.linalg.norm(H-self.origin)
-                            angle=np.arccos(dist2/dist1)
+                            angle=np.arcsin(dist2/dist1)
                             self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] += angle
                             
                     elif z >= 30.69859009: #sortie du tunnel

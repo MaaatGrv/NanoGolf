@@ -153,7 +153,7 @@ class ViewerGL:
                 if z<= -6.59623226 or z>=-3.87759959 or x<=-1.25192378:
                     H=np.array([x,self.origin[1],self.origin[2]]) #projeter de l'origine 
                     dist1 = np.linalg.norm(self.objs[0].transformation.translation-self.origin)
-                    dist2= np.linalg.norm(H-self.origin)
+                    dist2= np.linalg.norm(self.objs[0].transformation.translation-H)
                     angle=np.arccos(dist2/dist1)
                     print("angle",angle)
                     self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] += angle
@@ -166,7 +166,7 @@ class ViewerGL:
                 if x<= 10.48885479 or x>=13.42001983:
                     H=np.array([x,self.origin[1],self.origin[2]]) #projeter de l'origine 
                     dist1 = np.linalg.norm(self.objs[0].transformation.translation-self.origin)
-                    dist2= np.linalg.norm(H-self.origin)
+                    dist2= np.linalg.norm(self.objs[0].transformation.translation-H)
                     angle=np.arccos(dist2/dist1)
                     self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] += angle
                     
@@ -174,7 +174,7 @@ class ViewerGL:
                 if z<=15.32027702 and x<=11.67279503 or z>=15.05996786 and x>=12.2932566 :
                     H=np.array([x,self.origin[1],self.origin[2]]) 
                     dist1 = np.linalg.norm(self.objs[0].transformation.translation-self.origin)
-                    dist2= np.linalg.norm(H-self.origin)
+                    dist2= np.linalg.norm(self.objs[0].transformation.translation-H)
                     angle=np.arccos(dist2/dist1)
                     self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] += angle
                     
@@ -182,20 +182,20 @@ class ViewerGL:
                 if x<= 10.48885479 or x>=13.42001983:
                     H=np.array([x,self.origin[1],self.origin[2]]) 
                     dist1 = np.linalg.norm(self.objs[0].transformation.translation-self.origin)
-                    dist2= np.linalg.norm(H-self.origin)
+                    dist2= np.linalg.norm(self.objs[0].transformation.translation-H)
                     angle=np.arccos(dist2/dist1)
                     self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] += angle
             elif z >= 27.20517365 and z<30.69859009: #sixieme zone de collision (tunnel à 2 entrées)
                 if x<=12.51696171 and z<=27.07479128 or x>=13.12437002 and z>= 27.26509824: #entree gauche
                     H=np.array([x,self.origin[1],self.origin[2]]) 
                     dist1 = np.linalg.norm(self.objs[0].transformation.translation-self.origin)
-                    dist2= np.linalg.norm(H-self.origin)
+                    dist2= np.linalg.norm(self.objs[0].transformation.translation-H)
                     angle=np.arccos(dist2/dist1)
                     self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] += angle
                 elif x>=11.56392101 and z>=27.57170924 or x<=10.70062192 and z<=27.39683154: #entree droite
                     H=np.array([x,self.origin[1],self.origin[2]]) 
                     dist1 = np.linalg.norm(self.objs[0].transformation.translation-self.origin)
-                    dist2= np.linalg.norm(H-self.origin)
+                    dist2= np.linalg.norm(self.objs[0].transformation.translation-H)
                     angle=np.arccos(dist2/dist1)
                     self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] += angle
             elif z >= 30.69859009: #sortie du tunnel

@@ -191,7 +191,7 @@ class ViewerGL:
 
     # Permet de détecter si la balle est dans le trou (en réalité zone délimitée autour du drapeau)
     def toucher_drapeau(self, LimTrouList):
-        if self.lv_nb < 3 :
+        if self.lv_nb ==1 :
             L1=LimTrouList[self.lv_nb-1][0]
             xmin,xmax,zmin,zmax = [],[],[],[]
             xmin.append(L1[1][0])

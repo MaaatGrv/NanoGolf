@@ -29,7 +29,7 @@ def main():
     tr.translation.y = 0.4
     tr.translation.z = -5
     tr.rotation_center.z = 0.2
-    texture = glutils.load_texture('lavaball.jpg')
+    texture = glutils.load_texture('lava.png')
     o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
     viewer.add_object(o)
 

@@ -89,6 +89,7 @@ class ViewerGL:
                         if self.lv_nb < 2:
                             self.next_level()
                         else:
+                            self.flag=False
                             self.replay_game()
 
             for obj in self.objs:

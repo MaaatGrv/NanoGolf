@@ -89,7 +89,6 @@ class ViewerGL:
                         if self.lv_nb < 2:
                             self.next_level()
                         else:
-                            self.flag=False
                             self.replay_game()
 
             for obj in self.objs:
@@ -434,6 +433,7 @@ class ViewerGL:
 
     
     def ball_spawn(self):
+        self.flag=False
         self.objs[0].transformation.translation[0]=0.0
         self.objs[0].transformation.translation[1]=0.4
         self.objs[0].transformation.translation[2]=-5.0
@@ -454,6 +454,7 @@ class ViewerGL:
             self.display_coups()
             self.ball_spawn()
             self.replay=False
+
 
     # Fonction permettant changer de niveau en supprimant et ajoutant des éléments à la scène
 

@@ -337,7 +337,7 @@ class ViewerGL:
                             self.mvmt_rotation(-angle)
                             
                     elif z >= 27.20517365 and z<30.69859009: #sixieme zone de collision (tunnel à 2 entrées)
-                        if x<=12.31696171 and z<=27.27479128 or x>=13.22437002 and z>= 27.46509824: #entree gauche
+                        if x<=12.41696171 and z<=27.17479128 or x>=13.22437002 and z>= 27.26509824: #entree gauche
                             H=np.array([x,self.origin[1],self.origin[2]]) 
                             dist1 = np.linalg.norm(self.objs[0].transformation.translation-self.origin)
                             dist2= np.linalg.norm(self.objs[0].transformation.translation-H)

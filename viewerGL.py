@@ -337,7 +337,7 @@ class ViewerGL:
                             self.mvmt_rotation(-angle)
                             
                     elif z >= 27.20517365 and z<30.69859009: #sixieme zone de collision (tunnel à 2 entrées)
-                        if x<=12.51696171 and z<=27.07479128 or x>=13.12437002 and z>= 27.26509824: #entree gauche
+                        if x<=12.31696171 and z<=27.27479128 or x>=13.22437002 and z>= 27.46509824: #entree gauche
                             H=np.array([x,self.origin[1],self.origin[2]]) 
                             dist1 = np.linalg.norm(self.objs[0].transformation.translation-self.origin)
                             dist2= np.linalg.norm(H-self.origin)
@@ -349,14 +349,14 @@ class ViewerGL:
                             dist1 = np.linalg.norm(self.objs[0].transformation.translation-self.origin)
                             dist2= np.linalg.norm(H-self.origin)
                             angle=np.arccos(dist2/dist1)
-                            self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] += angle
+                            self.mvmt_rotation(-angle)
                             
                     elif z >= 30.69859009: #sortie du tunnel
                         self.teleportation()
                         
                 else: #on est sur le terrain avec le drapeau
                     if x<= -16.96154505 or x>=-13.43410631  or z<=  27.11692712 or z>=30.69859009:
-                        self.ball_spawn()
+                        self.mvmt_rotation(-0.6)
         
         
     # Gestion du mouvement de la balle

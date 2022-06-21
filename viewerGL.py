@@ -1,4 +1,8 @@
-#!/usr/bin/env python3
+"""
+@author: Mathis Gorvien/Ludwig Julie/Theotime Perrichet
+github : https://github.com/MaaatGrv/NanoGolf.git
+"""
+
 
 import multiprocessing
 from operator import length_hint
@@ -337,7 +341,7 @@ class ViewerGL:
                             self.mvmt_rotation(-angle)
                             
                     elif z >= 27.20517365 and z<30.69859009: #sixieme zone de collision (tunnel à 2 entrées)
-                        if x<=12.31696171 and z<=27.27479128 or x>=13.22437002 and z>= 27.46509824: #entree gauche
+                        if x<=12.41696171 and z<=27.17479128 or x>=13.22437002 and z>= 27.26509824: #entree gauche
                             H=np.array([x,self.origin[1],self.origin[2]]) 
                             dist1 = np.linalg.norm(self.objs[0].transformation.translation-self.origin)
                             dist2= np.linalg.norm(self.objs[0].transformation.translation-H)
@@ -433,6 +437,7 @@ class ViewerGL:
 
     
     def ball_spawn(self):
+        self.flag=False
         self.objs[0].transformation.translation[0]=0.0
         self.objs[0].transformation.translation[1]=0.4
         self.objs[0].transformation.translation[2]=-5.0
@@ -453,6 +458,7 @@ class ViewerGL:
             self.display_coups()
             self.ball_spawn()
             self.replay=False
+
 
     # Fonction permettant changer de niveau en supprimant et ajoutant des éléments à la scène
 

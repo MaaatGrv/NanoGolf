@@ -1,4 +1,7 @@
-#!/usr/bin/env python3
+"""
+@author: Mathis Gorvien/Ludwig Julie/Theotime Perrichet
+github : https://github.com/MaaatGrv/NanoGolf.git
+"""
 
 import os
 import OpenGL.GL as GL

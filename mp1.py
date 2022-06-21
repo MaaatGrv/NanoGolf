@@ -1,3 +1,8 @@
+"""
+@author: Mathis Gorvien/Ludwig Julie/Theotime Perrichet
+github : https://github.com/MaaatGrv/NanoGolf.git
+"""
+
 from multiprocessing import Process,Pipe
 
 class Test:

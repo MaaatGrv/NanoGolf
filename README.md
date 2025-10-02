@@ -5,61 +5,61 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)  
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)]()
 
-**NanoGolf** is a sophisticated 3D mini-golf simulation game built from scratch in Python using **OpenGL 3.3** and **GLSL shaders**. This project demonstrates advanced 3D graphics programming, physics simulation, collision detection, and interactive gameplay mechanics in a complete mini-golf experience.
+**NanoGolf** is a simple 3D mini-golf simulation game built from scratch in Python using **OpenGL 3.3** and **GLSL shaders**. This project demonstrates 3D graphics programming, physics simulation, collision detection, and interactive gameplay mechanics in a mini-golf experience.
 
-## 🎯 Game Overview
+##  Game Overview
 
 Experience a challenging 3D mini-golf adventure featuring:
-- **Two complete levels** with unique layouts and obstacles
+- **Two complete levels** with layouts and obstacles
 - **Realistic physics simulation** with trajectory calculation, friction, and momentum
-- **Dynamic camera system** that intelligently follows your ball
+- **Dynamic camera system** that follows your ball
 - **Power-based shot system** with visual feedback
-- **Sophisticated collision detection** across multiple terrain zones
+- **collision detection** across multiple terrain zones
 - **Score tracking and level progression**
 
-### 🏌️ Gameplay Mechanics
+### Gameplay Mechanics
 
 - **Shot Power Control**: Hold `P` to charge your shot power (0-100%), with a visual power bar
-- **Physics-Based Movement**: Realistic ball physics with exponential velocity decay
+- **Physics-Based Movement**: ball physics with exponential velocity decay
 - **Multi-Level Progression**: Complete Level 1 to unlock Level 2 with advanced obstacles
 - **Collision System**: Smart ball redirection based on collision angles and terrain
 - **Level Teleportation**: Special portal system in Level 2 for strategic gameplay
 
-## ✨ Technical Features
+##  Technical Features
 
-### 🎮 Core Gameplay
+###  Core Gameplay
 - **Dynamic Power System**: Real-time power charging with visual feedback
 - **Advanced Physics Engine**: Custom trajectory calculation with friction simulation
 - **Multi-Level Architecture**: Seamless level transitions and object management
 - **Score & Statistics Tracking**: Shot counting and level-based scoring system
 
-### 🖥️ 3D Graphics & Rendering
+###  3D Graphics & Rendering
 - **OpenGL 3.3 Core Profile**: Modern OpenGL for optimal performance
 - **Custom GLSL Shader Pipeline**: Multiple specialized shaders for different effects
 - **3D Mesh Loading**: Support for OBJ format 3D models
 - **Texture Management**: Efficient texture loading and binding system
 - **Dynamic Lighting**: Shader-based lighting calculations
 
-### 🔧 Advanced Systems
+###  Advanced Systems
 - **Camera Control System**: 3D camera with rotation, translation, and automatic following
 - **Collision Detection**: Zone-based collision system with angle-dependent responses
 - **UI/HUD Rendering**: 2D overlay system for game interface elements
 - **Text Rendering**: Custom bitmap font rendering system
 - **Object-Oriented Design**: Clean separation of concerns with modular architecture
 
-## 📂 Project Architecture
+##  Project Architecture
 
 ````
 NanoGolf/
-├── 🎮 Game Core
+├──  Game Core
 │   ├── main.py              # Game entry point & scene setup
 │   ├── viewerGL.py          # Main game engine & rendering loop
 │   └── cpe3d.py             # 3D transformations, camera & object classes
-├── 🔧 Engine Components  
+├──  Engine Components  
 │   ├── glutils.py           # OpenGL utilities & shader management
 │   ├── mesh.py              # 3D mesh loading & GPU buffer management
 │   └── requirements.txt     # Python dependencies
-├── 🎨 Assets
+├──  Assets
 │   ├── IMG/                 # Textures & UI elements
 │   │   ├── ball_red.png     # Ball texture
 │   │   ├── grass.jpg        # Terrain texture
@@ -76,12 +76,12 @@ NanoGolf/
 │       ├── shader.vert/frag # Main 3D rendering shaders
 │       ├── gui.vert/frag    # UI text rendering shaders
 │       └── bar.vert/frag    # Power bar shaders
-└── 🧪 Development
+└──  Development
     ├── mp1.py               # Multiprocessing utilities
     └── mp2.py               # Process communication tests
 ````
 
-## ⚙️ System Requirements
+## System Requirements
 
 ### Minimum Requirements
 - **OS**: Windows 10, macOS 10.14, or Linux (Ubuntu 18.04+)
@@ -95,7 +95,7 @@ NanoGolf/
 - **Memory**: 2GB+ RAM for smooth performance
 - **Display**: 1920x1080 resolution for optimal experience
 
-## 🚀 Installation & Setup
+## Installation & Setup
 
 ### Quick Start
 ```bash
@@ -142,7 +142,7 @@ python -c "import OpenGL.GL as GL; print('OpenGL Version:', GL.glGetString(GL.GL
 python main.py
 ```
 
-## 🎮 Game Controls
+## Game Controls
 
 ### Basic Controls
 | Input | Action |
@@ -165,7 +165,7 @@ python main.py
 - **Direction Planning**: Use arrow keys to aim before charging your shot
 - **Momentum Management**: Consider ball momentum for curved shots around obstacles
 
-## 🏗️ Technical Architecture
+## Technical Architecture
 
 ### Core Engine Components
 
@@ -205,7 +205,7 @@ distance = Tau * v0 * (exp(-t0/Tau) - exp(-t1/Tau))
 - **Angle-Dependent Response**: Ball direction changes based on collision angle
 - **Boundary Enforcement**: Prevents ball from leaving playable area
 
-## 🎨 Shader System
+## Shader System
 
 ### Available Shaders
 - **`shader.vert/frag`**: Main 3D object rendering with lighting and textures
@@ -218,7 +218,7 @@ distance = Tau * v0 * (exp(-t0/Tau) - exp(-t1/Tau))
 - **Texture Mapping**: Multi-texture support with UV coordinates
 - **Dynamic Coloring**: Real-time color modifications for game elements
 
-## 🔧 Development Guide
+## Development Guide
 
 ### Extending the Game
 
@@ -256,7 +256,7 @@ def trajectory(self):
 - **Modular Design**: Keep functionality separated by concern
 - **OpenGL Best Practices**: Minimize state changes, use VAOs efficiently
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
@@ -292,45 +292,6 @@ python -c "import glfw; print('GLFW Version:', glfw.get_version())"
 - **Window Focus**: Ensure game window has keyboard focus
 - **GLFW Version**: Update to latest PyGLFW version
 - **Key Mapping**: Check if your keyboard layout affects key detection
-
-## 🚀 Performance Optimization
-
-### Rendering Optimizations
-- **Batch Rendering**: Objects with same shader/texture rendered together
-- **Frustum Culling**: Off-screen objects not rendered (can be implemented)
-- **Level-of-Detail**: Different mesh complexity based on distance (future feature)
-
-### Memory Management
-- **GPU Buffer Reuse**: Meshes loaded once, instanced multiple times
-- **Texture Compression**: Consider compressed texture formats for larger projects
-- **Object Pooling**: Reuse objects instead of creating/destroying frequently
-
-### Contribution Areas
-- 🎮 **Gameplay**: New levels, obstacles, game modes
-- 🎨 **Graphics**: Improved shaders, visual effects, UI design
-- 🔧 **Performance**: Optimization, profiling, memory management
-- 📱 **Platforms**: Mobile support, web deployment
-- 🎵 **Audio**: Sound effects, background music
-- 📚 **Documentation**: Code comments, tutorials, guides
-
-### Code Review Guidelines
-- **Functionality**: Does it work as expected?
-- **Performance**: No significant performance regression
-- **Style**: Consistent with existing codebase
-- **Documentation**: New features properly documented
-
-## 📊 Technical Specifications
-
-### Performance Metrics
-- **Target FPS**: 60 FPS at 1080p
-- **Memory Usage**: ~100MB typical, ~200MB peak
-- **GPU Memory**: ~50MB textures and meshes
-- **Startup Time**: <3 seconds on modern hardware
-
-### Supported Formats
-- **3D Models**: OBJ format with vertex normals and texture coordinates
-- **Textures**: PNG, JPG, JPEG (via Pillow)
-- **Shaders**: GLSL 3.3+ vertex and fragment shaders
 
 ## 📜 License & Credits
 
